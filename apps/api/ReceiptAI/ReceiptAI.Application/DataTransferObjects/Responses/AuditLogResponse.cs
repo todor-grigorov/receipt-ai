@@ -1,6 +1,6 @@
 ﻿using ReceiptAI.Domain.Enums;
 
-namespace ReceiptAI.Application.DataTransferObjects
+namespace ReceiptAI.Application.DataTransferObjects.Responses
 {
     public record AuditLogResponse(
         Guid Id,

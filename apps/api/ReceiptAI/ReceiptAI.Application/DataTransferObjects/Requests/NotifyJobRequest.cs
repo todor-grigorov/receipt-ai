@@ -1,6 +1,6 @@
 ﻿using ReceiptAI.Domain.Enums;
 
-namespace ReceiptAI.Application.DataTransferObjects
+namespace ReceiptAI.Application.DataTransferObjects.Requests
 {
     public record NotifyJobRequest(
     Guid CorrelationId,

@@ -1,4 +1,4 @@
-﻿namespace ReceiptAI.Application.DataTransferObjects
+﻿namespace ReceiptAI.Application.DataTransferObjects.Responses
 {
     public record ReceiptLineItemResponse(
         Guid Id,

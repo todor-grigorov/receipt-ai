@@ -1,4 +1,4 @@
-﻿namespace ReceiptAI.Application.DataTransferObjects
+﻿namespace ReceiptAI.Application.DataTransferObjects.Requests
 {
     public record UploadReceiptRequest(
      Stream FileStream,
