@@ -1,4 +1,4 @@
-﻿using ReceiptAI.Application.DataTransferObjects;
+﻿using ReceiptAI.Application.DataTransferObjects.Responses;
 using ReceiptAI.Domain.Enums;
 
 namespace ReceiptAI.Application.Interfaces.Services

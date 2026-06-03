@@ -1,4 +1,5 @@
-﻿using ReceiptAI.Application.DataTransferObjects;
+﻿using ReceiptAI.Application.DataTransferObjects.Requests;
+using ReceiptAI.Application.DataTransferObjects.Responses;
 
 namespace ReceiptAI.Application.Interfaces.Services
 {
