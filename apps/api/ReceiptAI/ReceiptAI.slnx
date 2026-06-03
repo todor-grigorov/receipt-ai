@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ReceiptAI.Api/ReceiptAI.Api.csproj" Id="b8d51b4e-8f61-46dc-b77b-92e2327531bb" />
+  <Project Path="ReceiptAI.Domain/ReceiptAI.Domain.csproj" Id="a1df19e8-2ed1-45b4-99ea-e3f54b35167b" />
+</Solution>
