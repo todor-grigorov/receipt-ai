@@ -1,0 +1,32 @@
+# ── .NET ──────────────────────────────
+**/bin/
+**/obj/
+*.user
+*.suo
+.vs/
+**/appsettings.Development.json
+**/appsettings.Local.json
+
+# ── Node.js (Function + Frontend) ─────
+**/node_modules/
+**/dist/
+**/.next/
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.production.local
+
+# ── Docker ────────────────────────────
+.dockerignore
+
+# ── Azure Function ────────────────────
+apps/function/local.settings.json
+
+# ── OS ────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE ───────────────────────────────
+.idea/
+.vscode/
+*.swp
