@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
+using ReceiptAI.Application.Interfaces.Repositories;
+using System.Linq.Expressions;
 
 namespace ReceiptAI.Infrastructure.Persistence
 {
