@@ -10,6 +10,7 @@
         public decimal? Tax { get; set; }
         public string? Currency { get; set; }
         public string RawLlmResponse { get; set; } = string.Empty;
+        public string OriginalFileName { get; set; } = string.Empty;
 
         // Navigation
         public Job Job { get; set; } = null!;
