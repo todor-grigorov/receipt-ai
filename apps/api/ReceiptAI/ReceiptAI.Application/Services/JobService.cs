@@ -1,4 +1,5 @@
-﻿using ReceiptAI.Application.DataTransferObjects.Responses;
+﻿using AutoMapper;
+using ReceiptAI.Application.DataTransferObjects.Responses;
 using ReceiptAI.Application.Interfaces.Repositories;
 using ReceiptAI.Application.Interfaces.Services;
 using ReceiptAI.Domain.Constants;
@@ -9,17 +10,18 @@ using ReceiptAI.Domain.Exceptions;
 namespace ReceiptAI.Application.Services
 {
     public class JobService(
-    IJobRepository jobRepository,
-    IAuditService auditService) : IJobService
+     IRepositoryManager repository,
+     IAuditService auditService,
+     IMapper mapper) : IJobService
     {
         public async Task<JobStatusResponse> GetByIdAsync(
             Guid id,
             CancellationToken ct = default)
         {
-            var job = await jobRepository.GetByIdAsync(id, ct)
+            var job = await repository.Job.GetByIdAsync(id, ct)
                 ?? throw new NotFoundException($"Job {id} not found");
 
-            return MapToResponse(job);
+            return mapper.Map<JobStatusResponse>(job);
         }
 
         public async Task<IEnumerable<JobStatusResponse>> GetByUserIdAsync(
@@ -29,8 +31,10 @@ namespace ReceiptAI.Application.Services
             JobStatus? statusFilter = null,
             CancellationToken ct = default)
         {
-            var jobs = await jobRepository.GetByUserIdAsync(userId, page, pageSize, statusFilter, ct);
-            return jobs.Select(MapToResponse);
+            var jobs = await repository.Job.GetByUserIdAsync(
+                userId, page, pageSize, statusFilter, ct);
+
+            return mapper.Map<IEnumerable<JobStatusResponse>>(jobs);
         }
 
         public async Task<JobStatusResponse> CreateAsync(
@@ -47,7 +51,7 @@ namespace ReceiptAI.Application.Services
                 Status = JobStatus.Pending
             };
 
-            await jobRepository.AddAsync(job, ct);
+            await repository.Job.AddAsync(job, ct);
 
             await auditService.LogAsync(
                 correlationId,
@@ -57,7 +61,7 @@ namespace ReceiptAI.Application.Services
                 payload: new { blobUrl },
                 ct: ct);
 
-            return MapToResponse(job);
+            return mapper.Map<JobStatusResponse>(job);
         }
 
         public async Task<JobStatusResponse> UpdateStatusAsync(
@@ -66,33 +70,27 @@ namespace ReceiptAI.Application.Services
             string? errorMessage = null,
             CancellationToken ct = default)
         {
-            var job = await jobRepository.GetByCorrelationIdAsync(correlationId, ct)
-                ?? throw new NotFoundException($"Job with correlationId {correlationId} not found");
+            var job = await repository.Job.GetByCorrelationIdAsync(correlationId, ct)
+                ?? throw new NotFoundException(
+                    $"Job with correlationId {correlationId} not found");
 
             job.Status = status;
             job.ErrorMessage = errorMessage;
 
-            await jobRepository.UpdateAsync(job, ct);
+            await repository.Job.UpdateAsync(job, ct);
 
             await auditService.LogAsync(
                 correlationId,
-                status == JobStatus.Failed ? AuditEventType.JobFailed : AuditEventType.JobCompleted,
+                status == JobStatus.Failed
+                    ? AuditEventType.JobFailed
+                    : AuditEventType.JobCompleted,
                 service: ServiceNames.Api,
                 payload: new { status = status.ToString(), errorMessage },
                 isSuccess: status != JobStatus.Failed,
                 errorMessage: errorMessage,
                 ct: ct);
 
-            return MapToResponse(job);
+            return mapper.Map<JobStatusResponse>(job);
         }
-
-        private static JobStatusResponse MapToResponse(Job job) => new(
-            job.Id,
-            job.CorrelationId,
-            job.Status,
-            job.ErrorMessage,
-            job.Receipt?.Id,
-            job.CreatedAt,
-            job.UpdatedAt);
     }
 }

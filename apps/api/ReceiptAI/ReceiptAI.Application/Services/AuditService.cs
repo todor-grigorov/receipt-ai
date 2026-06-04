@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace ReceiptAI.Application.Services
 {
-    public class AuditService(IAuditLogRepository auditLogRepository) : IAuditService
+    public class AuditService(IRepositoryManager repository) : IAuditService
     {
         public async Task LogAsync(
             Guid correlationId,
@@ -31,14 +31,12 @@ namespace ReceiptAI.Application.Services
                 ErrorMessage = errorMessage
             };
 
-            await auditLogRepository.AddAsync(auditLog, ct);
+            await repository.AuditLog.AddAsync(auditLog, ct);
         }
 
         public async Task<IEnumerable<AuditLog>> GetTrailAsync(
             Guid correlationId,
-            CancellationToken ct = default)
-        {
-            return await auditLogRepository.GetByCorrelationIdAsync(correlationId, ct);
-        }
+            CancellationToken ct = default) =>
+            await repository.AuditLog.GetByCorrelationIdAsync(correlationId, ct);
     }
 }

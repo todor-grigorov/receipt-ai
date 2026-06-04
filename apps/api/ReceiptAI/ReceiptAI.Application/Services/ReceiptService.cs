@@ -1,4 +1,5 @@
-﻿using ReceiptAI.Application.DataTransferObjects.Requests;
+﻿using AutoMapper;
+using ReceiptAI.Application.DataTransferObjects.Requests;
 using ReceiptAI.Application.DataTransferObjects.Responses;
 using ReceiptAI.Application.Interfaces.Repositories;
 using ReceiptAI.Application.Interfaces.Services;
@@ -10,17 +11,18 @@ using System.Transactions;
 namespace ReceiptAI.Application.Services
 {
     public class ReceiptService(
-    IReceiptRepository receiptRepository,
-    IJobService jobService,
-    IBlobService blobService,
-    IAuditService auditService,
-    ICurrentUserService currentUser) : IReceiptService
+        IRepositoryManager repository,
+        IJobService jobService,
+        IAuditService auditService,
+        IBlobService blobService,
+        ICurrentUserService currentUser,
+        IMapper mapper) : IReceiptService
     {
         public async Task<ReceiptResponse> GetByIdAsync(
             Guid id,
             CancellationToken ct = default)
         {
-            var receipt = await receiptRepository.GetByIdAsync(id, ct)
+            var receipt = await repository.Receipt.GetByIdAsync(id, ct)
                 ?? throw new NotFoundException($"Receipt {id} not found");
 
             if (receipt.UserId != currentUser.UserId)
@@ -33,20 +35,21 @@ namespace ReceiptAI.Application.Services
                 actor: $"user:{currentUser.UserId}",
                 ct: ct);
 
-            return MapToResponse(receipt);
+            return mapper.Map<ReceiptResponse>(receipt);
         }
 
         public async Task<ReceiptResponse> GetByJobIdAsync(
             Guid jobId,
             CancellationToken ct = default)
         {
-            var receipt = await receiptRepository.GetByJobIdAsync(jobId, ct)
-                ?? throw new NotFoundException($"Receipt for job {jobId} not found");
+            var receipt = await repository.Receipt.GetByJobIdAsync(jobId, ct)
+                ?? throw new NotFoundException(
+                    $"Receipt for job {jobId} not found");
 
             if (receipt.UserId != currentUser.UserId)
                 throw new UnauthorizedException("Access denied");
 
-            return MapToResponse(receipt);
+            return mapper.Map<ReceiptResponse>(receipt);
         }
 
         public async Task<IEnumerable<ReceiptResponse>> GetByUserIdAsync(
@@ -55,17 +58,18 @@ namespace ReceiptAI.Application.Services
             int pageSize,
             CancellationToken ct = default)
         {
-            var receipts = await receiptRepository.GetByUserIdAsync(userId, page, pageSize, ct);
-            return receipts.Select(MapToResponse);
+            var receipts = await repository.Receipt
+                .GetByUserIdAsync(userId, page, pageSize, ct);
+
+            return mapper.Map<IEnumerable<ReceiptResponse>>(receipts);
         }
 
         public async Task<ReceiptResponse> UploadAsync(
-    UploadReceiptRequest request,
-    CancellationToken ct = default)
+            UploadReceiptRequest request,
+            CancellationToken ct = default)
         {
             var correlationId = Guid.NewGuid();
 
-            // Outside transaction — external call
             var blobUrl = await blobService.UploadAsync(
                 request.FileStream,
                 request.FileName,
@@ -80,7 +84,7 @@ namespace ReceiptAI.Application.Services
                 {
                     IsolationLevel = IsolationLevel.ReadCommitted
                 },
-                TransactionScopeAsyncFlowOption.Enabled);  // ← critical for async
+                TransactionScopeAsyncFlowOption.Enabled);
 
             try
             {
@@ -111,11 +115,10 @@ namespace ReceiptAI.Application.Services
                     blobUrl,
                     ct);
 
-                scope.Complete();  // ← commits only if we reach this line
+                scope.Complete();
             }
             catch
             {
-                // scope.Complete() not called — automatic rollback on dispose
                 await blobService.DeleteAsync(blobUrl, ct);
                 throw;
             }
@@ -134,30 +137,14 @@ namespace ReceiptAI.Application.Services
 
         public async Task DeleteAsync(Guid id, CancellationToken ct = default)
         {
-            var receipt = await receiptRepository.GetByIdAsync(id, ct)
+            var receipt = await repository.Receipt.GetByIdAsync(id, ct)
                 ?? throw new NotFoundException($"Receipt {id} not found");
 
             if (receipt.UserId != currentUser.UserId)
                 throw new UnauthorizedException("Access denied");
 
             await blobService.DeleteAsync(receipt.Job.BlobUrl, ct);
-            await receiptRepository.DeleteAsync(id, ct);
+            await repository.Receipt.DeleteAsync(id, ct);
         }
-
-        private static ReceiptResponse MapToResponse(Domain.Entities.Receipt receipt) => new(
-            receipt.Id,
-            receipt.JobId,
-            receipt.MerchantName,
-            receipt.ReceiptDate,
-            receipt.Total,
-            receipt.Tax,
-            receipt.Currency,
-            receipt.LineItems.Select(li => new ReceiptLineItemResponse(
-                li.Id,
-                li.Description,
-                li.Quantity,
-                li.UnitPrice,
-                li.TotalPrice)),
-            receipt.CreatedAt);
     }
 }
