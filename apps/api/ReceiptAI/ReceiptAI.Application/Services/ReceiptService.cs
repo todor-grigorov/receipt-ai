@@ -5,6 +5,7 @@ using ReceiptAI.Application.Interfaces.Services;
 using ReceiptAI.Domain.Constants;
 using ReceiptAI.Domain.Enums;
 using ReceiptAI.Domain.Exceptions;
+using System.Transactions;
 
 namespace ReceiptAI.Application.Services
 {
@@ -59,46 +60,66 @@ namespace ReceiptAI.Application.Services
         }
 
         public async Task<ReceiptResponse> UploadAsync(
-            UploadReceiptRequest request,
-            CancellationToken ct = default)
+    UploadReceiptRequest request,
+    CancellationToken ct = default)
         {
             var correlationId = Guid.NewGuid();
 
-            await auditService.LogAsync(
-                correlationId,
-                AuditEventType.ReceiptUploaded,
-                service: ServiceNames.Api,
-                actor: $"user:{currentUser.UserId}",
-                payload: new
-                {
-                    request.FileName,
-                    request.ContentType,
-                    request.FileSizeBytes
-                },
-                ct: ct);
-
+            // Outside transaction — external call
             var blobUrl = await blobService.UploadAsync(
                 request.FileStream,
                 request.FileName,
                 request.ContentType,
-                ct);
-
-            await auditService.LogAsync(
-                correlationId,
-                AuditEventType.BlobStored,
-                service: ServiceNames.Api,
-                actor: $"user:{currentUser.UserId}",
-                payload: new { blobUrl },
-                ct: ct);
-
-            await jobService.CreateAsync(
-                correlationId,
                 currentUser.UserId,
-                blobUrl,
+                correlationId,
                 ct);
 
-            // Return a pending response — the actual receipt result
-            // arrives later via SignalR when the Azure Function completes
+            using var scope = new TransactionScope(
+                TransactionScopeOption.Required,
+                new TransactionOptions
+                {
+                    IsolationLevel = IsolationLevel.ReadCommitted
+                },
+                TransactionScopeAsyncFlowOption.Enabled);  // ← critical for async
+
+            try
+            {
+                await auditService.LogAsync(
+                    correlationId,
+                    AuditEventType.ReceiptUploaded,
+                    service: ServiceNames.Api,
+                    actor: $"user:{currentUser.UserId}",
+                    payload: new
+                    {
+                        request.FileName,
+                        request.ContentType,
+                        request.FileSizeBytes
+                    },
+                    ct: ct);
+
+                await auditService.LogAsync(
+                    correlationId,
+                    AuditEventType.BlobStored,
+                    service: ServiceNames.Api,
+                    actor: $"user:{currentUser.UserId}",
+                    payload: new { blobUrl },
+                    ct: ct);
+
+                await jobService.CreateAsync(
+                    correlationId,
+                    currentUser.UserId,
+                    blobUrl,
+                    ct);
+
+                scope.Complete();  // ← commits only if we reach this line
+            }
+            catch
+            {
+                // scope.Complete() not called — automatic rollback on dispose
+                await blobService.DeleteAsync(blobUrl, ct);
+                throw;
+            }
+
             return new ReceiptResponse(
                 Id: Guid.Empty,
                 JobId: correlationId,
