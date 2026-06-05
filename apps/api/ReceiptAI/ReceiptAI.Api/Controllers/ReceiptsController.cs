@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReceiptAI.Application.DataTransferObjects.Requests;
 using ReceiptAI.Application.DataTransferObjects.Responses;
@@ -6,6 +7,7 @@ using ReceiptAI.Application.Interfaces.Services;
 
 namespace ReceiptAI.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/receipts")]
     public class ReceiptsController(

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ReceiptAI.Application.DataTransferObjects.Responses;
 using ReceiptAI.Application.Interfaces.Services;
 using ReceiptAI.Domain.Enums;
 
 namespace ReceiptAI.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/jobs")]
     public class JobsController(
