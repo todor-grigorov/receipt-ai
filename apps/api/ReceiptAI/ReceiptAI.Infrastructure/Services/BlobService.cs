@@ -72,7 +72,4 @@ namespace ReceiptAI.Infrastructure.Services
                 : path.TrimStart('/');
         }
     }
-    class BlobService
-    {
-    }
 }
