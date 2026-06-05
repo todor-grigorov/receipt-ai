@@ -18,6 +18,7 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+app.UseMiddleware<ApiKeyMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
