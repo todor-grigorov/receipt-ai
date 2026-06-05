@@ -64,6 +64,11 @@ namespace ReceiptAI.Application.Services
             return mapper.Map<IEnumerable<ReceiptResponse>>(receipts);
         }
 
+        public async Task<int> CountByUserIdAsync(
+            string userId,
+            CancellationToken ct = default) =>
+            await repository.Receipt.CountByUserIdAsync(userId, ct);
+
         public async Task<ReceiptResponse> UploadAsync(
             UploadReceiptRequest request,
             CancellationToken ct = default)
