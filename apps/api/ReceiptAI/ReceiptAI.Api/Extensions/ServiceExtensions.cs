@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReceiptAI.Api.Services;
 using ReceiptAI.Application.Interfaces.Repositories;
 using ReceiptAI.Application.Interfaces.Services;
 using ReceiptAI.Application.Services;
 using ReceiptAI.Infrastructure.Persistence;
 using ReceiptAI.Infrastructure.Persistence.Repositories;
+using ReceiptAI.Infrastructure.Services;
 
 namespace ReceiptAI.Api.Extensions
 {
@@ -35,6 +37,10 @@ namespace ReceiptAI.Api.Extensions
             services.AddScoped<IJobService, JobService>();
             services.AddScoped<IReceiptService, ReceiptService>();
             services.AddScoped<IAuditService, AuditService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IBlobService, BlobService>();
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
         }
 
         public static void ConfigureSwagger(this IServiceCollection services)
