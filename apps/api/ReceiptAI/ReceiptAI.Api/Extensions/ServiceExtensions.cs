@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using ReceiptAI.Api.Services;
@@ -47,14 +48,17 @@ namespace ReceiptAI.Api.Extensions
 
         public static void ConfigureSwagger(this IServiceCollection services)
         {
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen(options =>
+            services.AddOpenApi(options =>
             {
-                options.SwaggerDoc("v1", new()
+                options.AddDocumentTransformer((document, context, ct) =>
                 {
-                    Title = "ReceiptAI API",
-                    Version = "v1",
-                    Description = "Async receipt processing with Gemini 2.5 Flash"
+                    document.Info = new()
+                    {
+                        Title = "ReceiptAI API",
+                        Version = "v1",
+                        Description = "Async receipt processing with Gemini 2.5 Flash"
+                    };
+                    return Task.CompletedTask;
                 });
             });
         }
@@ -64,5 +68,15 @@ namespace ReceiptAI.Api.Extensions
             IConfiguration configuration) =>
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAd"));
+
+        public static void ConfigureBlobStorage(
+            this IServiceCollection services,
+            IConfiguration configuration) =>
+            services.AddSingleton(new BlobServiceClient(
+                configuration.GetConnectionString("AzureBlobStorage")
+                ?? "UseDevelopmentStorage=true"));
+
+        public static void ConfigureSignalR(this IServiceCollection services) =>
+            services.AddSignalR();
     }
 }

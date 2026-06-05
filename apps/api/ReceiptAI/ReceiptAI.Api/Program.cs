@@ -1,5 +1,7 @@
 using ReceiptAI.Api.Extensions;
+using ReceiptAI.Api.Hubs;
 using ReceiptAI.Api.Middleware;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,8 @@ builder.Services.ConfigureRepositories();
 builder.Services.ConfigureServices();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureAuth(builder.Configuration);
+builder.Services.ConfigureBlobStorage(builder.Configuration);
+builder.Services.ConfigureSignalR();
 
 builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
 
@@ -24,19 +28,16 @@ app.UseMiddleware<ApiKeyMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "ReceiptAI API v1");
-        options.RoutePrefix = string.Empty;
-    });
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<JobHub>("/hubs/jobs");
 
 app.Run();
