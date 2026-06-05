@@ -9,6 +9,7 @@ builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositories();
 builder.Services.ConfigureServices();
 builder.Services.ConfigureSwagger();
+builder.Services.ConfigureAuth(builder.Configuration);
 
 builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
 

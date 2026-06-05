@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
 using ReceiptAI.Api.Services;
 using ReceiptAI.Application.Interfaces.Repositories;
 using ReceiptAI.Application.Interfaces.Services;
@@ -56,5 +58,11 @@ namespace ReceiptAI.Api.Extensions
                 });
             });
         }
+
+        public static void ConfigureAuth(
+            this IServiceCollection services,
+            IConfiguration configuration) =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAd"));
     }
 }
