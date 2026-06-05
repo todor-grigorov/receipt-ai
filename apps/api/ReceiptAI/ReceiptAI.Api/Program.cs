@@ -1,6 +1,14 @@
+using ReceiptAI.Api.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.ConfigureCors();
+builder.Services.ConfigureSqlContext(builder.Configuration);
+builder.Services.ConfigureRepositories();
+builder.Services.ConfigureServices();
+builder.Services.ConfigureSwagger();
+
 builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
 
 builder.Services.AddControllers();
@@ -12,9 +20,15 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "ReceiptAI API v1");
+        options.RoutePrefix = string.Empty;
+    });
 }
 
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
