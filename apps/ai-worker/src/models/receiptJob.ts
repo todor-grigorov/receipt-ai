@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const ReceiptJobSchema = z.object({
-  correlationId: z.string().uuid(),
-  blobUrl: z.string().url(),
+  correlationId: z.uuid(),
+  blobUrl: z.url(),
   userId: z.string().min(1),
   fileName: z.string().min(1),
   contentType: z.enum([
