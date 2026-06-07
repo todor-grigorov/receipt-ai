@@ -17,4 +17,8 @@ export const ReceiptResultSchema = z.object({
 });
 
 export type ReceiptLineItem = z.infer<typeof ReceiptLineItemSchema>;
-export type ReceiptResult = z.infer<typeof ReceiptResultSchema>;
+export type ReceiptResultBase = z.infer<typeof ReceiptResultSchema>;
+
+export interface ReceiptResult extends ReceiptResultBase {
+  rawLlmResponse: string;
+}
