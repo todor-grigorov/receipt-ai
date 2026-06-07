@@ -1,0 +1,28 @@
+{
+  "name": "ai-worker",
+  "version": "1.0.0",
+  "description": "Azure Function worker for receipt processing",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "start": "npm run build && npx func start",
+    "start:watch": "npx func start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/pg": "^8.20.0",
+    "azure-functions-core-tools": "^4.12.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.16.0",
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.17.0",
+    "pg": "^8.21.0"
+  }
+}

@@ -15,6 +15,7 @@
 **/.env.local
 **/.env.development.local
 **/.env.production.local
+**/local.settings.json
 
 # ── Docker ────────────────────────────
 .dockerignore
