@@ -23,6 +23,7 @@
     "@azure/functions": "^4.16.0",
     "@google/generative-ai": "^0.24.1",
     "axios": "^1.17.0",
-    "pg": "^8.21.0"
+    "pg": "^8.21.0",
+    "zod": "^4.4.3"
   }
 }
