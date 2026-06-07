@@ -16,6 +16,7 @@
 **/.env.development.local
 **/.env.production.local
 **/local.settings.json
+**/.azurite/
 
 # ── Docker ────────────────────────────
 .dockerignore

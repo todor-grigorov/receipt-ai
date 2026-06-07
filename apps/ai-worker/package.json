@@ -7,7 +7,8 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "start": "npm run build && npx func start",
-    "start:watch": "npx func start"
+    "start:watch": "npx func start",
+    "azurite": "npx azurite --silent --location .azurite --debug .azurite/debug.log"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "@types/node": "^25.9.2",
     "@types/pg": "^8.20.0",
     "azure-functions-core-tools": "^4.12.0",
+    "azurite": "^3.35.0",
     "typescript": "^6.0.3"
   },
   "dependencies": {
