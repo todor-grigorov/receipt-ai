@@ -17,6 +17,8 @@
 **/.env.production.local
 **/local.settings.json
 **/.azurite/
+**/AGENTS.md
+**/CLAUDE.md
 
 # ── Docker ────────────────────────────
 .dockerignore
