@@ -12,10 +12,14 @@ namespace ReceiptAI.Api.Mappers
             // ── Entity → Response ────────────────────────────
 
             CreateMap<Job, JobStatusResponse>()
-                .ForCtorParam(nameof(JobStatusResponse.ResultId),
-                    opt => opt.MapFrom(src => src.Receipt != null
-                        ? src.Receipt.Id
-                        : (Guid?)null));
+                .ConstructUsing(src => new JobStatusResponse(
+                    src.Id,
+                    src.CorrelationId,
+                    src.Status,
+                    src.ErrorMessage,
+                    src.Receipt != null ? src.Receipt.Id : (Guid?)null,
+                    src.CreatedAt,
+                    src.UpdatedAt));
 
             CreateMap<Receipt, ReceiptResponse>();
 
@@ -26,14 +30,12 @@ namespace ReceiptAI.Api.Mappers
             // ── IFormFile → UploadReceiptRequest ─────────────
 
             CreateMap<IFormFile, UploadReceiptRequest>()
-                .ForCtorParam(nameof(UploadReceiptRequest.FileStream),
-                    opt => opt.MapFrom(src => src.OpenReadStream()))
-                .ForCtorParam(nameof(UploadReceiptRequest.FileName),
-                    opt => opt.MapFrom(src => src.FileName))
-                .ForCtorParam(nameof(UploadReceiptRequest.ContentType),
-                    opt => opt.MapFrom(src => src.ContentType))
-                .ForCtorParam(nameof(UploadReceiptRequest.FileSizeBytes),
-                    opt => opt.MapFrom(src => src.Length));
+                .ConstructUsing(src => new UploadReceiptRequest(
+                    src.OpenReadStream(),
+                    src.FileName,
+                    src.ContentType,
+                    src.Length,
+                    string.Empty));
         }
     }
 }
