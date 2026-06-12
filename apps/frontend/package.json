@@ -9,6 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@azure/msal-browser": "^5.13.0",
+    "@azure/msal-react": "^5.4.4",
+    "@microsoft/signalr": "^10.0.0",
+    "axios": "^1.17.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.18.0",
