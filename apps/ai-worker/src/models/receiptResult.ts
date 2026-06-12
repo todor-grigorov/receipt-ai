@@ -3,15 +3,15 @@ import { z } from "zod";
 export const ReceiptLineItemSchema = z.object({
   description: z.string().min(1),
   quantity: z.number().int().positive(),
-  unitPrice: z.number().nonnegative(),
-  totalPrice: z.number().nonnegative(),
+  unitPrice: z.number(),
+  totalPrice: z.number(),
 });
 
 export const ReceiptResultSchema = z.object({
-  merchantName: z.string().min(1),
+  merchantName: z.string().nullable(),
   receiptDate: z.string().nullable(),
-  total: z.number().nonnegative(),
-  tax: z.number().nonnegative().nullable(),
+  total: z.number(),
+  tax: z.number().nullable(),
   currency: z.string().max(8).nullable(),
   lineItems: z.array(ReceiptLineItemSchema),
 });
