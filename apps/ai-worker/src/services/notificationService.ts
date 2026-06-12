@@ -2,9 +2,11 @@ import axios from "axios";
 import { config } from "../config";
 import { JobNotification, JobStatus } from "../models/jobNotification";
 
+const baseUrl = config.ASPNET_API_URL.replace(/\/$/, "");
+
 async function notify(notification: JobNotification): Promise<void> {
   await axios.post(
-    `${config.ASPNET_API_URL}/api/internal/notifications/jobs/${notification.correlationId}`,
+    `${baseUrl}/api/internal/notifications/jobs/${notification.correlationId}`,
     notification,
     {
       headers: {
