@@ -17,6 +17,7 @@
 **/.env.production.local
 **/local.settings.json
 **/.azurite/
+**/.env.local
 **/AGENTS.md
 **/CLAUDE.md
 
