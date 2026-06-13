@@ -22,7 +22,7 @@ const Login = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">
-          <button className="flex items-center gap-3 bg-[#2563EB] text-white px-6 py-3 rounded-lg w-sm justify-center">
+          <button className="flex items-center gap-3 bg-[#2563EB] text-white px-6 py-3 rounded-lg w-sm justify-center cursor-pointer">
             <MicrosoftLogo />
             Sign in with Microsoft
           </button>
