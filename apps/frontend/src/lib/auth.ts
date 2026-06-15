@@ -8,7 +8,10 @@ import {
 const msalConfig: Configuration = {
   auth: {
     clientId: process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID!,
-    authority: `https://${process.env.NEXT_PUBLIC_AZURE_AD_TENANT_NAME}.ciamlogin.com`,
+    authority: `https://${process.env.NEXT_PUBLIC_AZURE_AD_TENANT_NAME}.ciamlogin.com/${process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID}/v2.0`,
+    knownAuthorities: [
+      `${process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID}.ciamlogin.com`,
+    ],
     redirectUri: process.env.NEXT_PUBLIC_AZURE_AD_REDIRECT_URI,
     postLogoutRedirectUri: process.env.NEXT_PUBLIC_AZURE_AD_REDIRECT_URI,
   },
