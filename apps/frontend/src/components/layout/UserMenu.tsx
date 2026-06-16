@@ -36,10 +36,15 @@ const UserMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
-          <AvatarFallback>{initials || "RA"}</AvatarFallback>
+          <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="mr-4">
+      <DropdownMenuContent className="mr-4 w-auto">
+        <div className="px-2 py-1.5">
+          <p className="text-sm font-medium">{account?.name}</p>
+          <p className="text-xs text-[#6B7280]">{account?.username}</p>
+        </div>
+        <DropdownMenuSeparator />
         <DropdownMenuItem>
           <UserIcon />
           Profile
