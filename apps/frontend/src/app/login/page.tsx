@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { signIn } from "@/lib/auth";
-import MicrosoftLogo from "@/components/MicrosoftLogo";
-import { Button } from "@/components/ui/button";
+import { signIn } from '@/lib/auth'
+import MicrosoftLogo from '@/components/MicrosoftLogo'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card'
 
 const Login = () => {
   return (
     <div className="w-full min-h-screen bg-[#F9FAFB] flex justify-center items-center">
       <Card
-        style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}
+        style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
         className="w-md h-fit py-12 shadow-md"
       >
         <CardHeader className="flex flex-col items-center justify-center p-0">
@@ -35,7 +35,7 @@ const Login = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

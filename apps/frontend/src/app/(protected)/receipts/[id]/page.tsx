@@ -5,5 +5,5 @@ export default function ResultPage({ params }: { params: { id: string } }) {
         Result {params.id}
       </h1>
     </div>
-  );
+  )
 }

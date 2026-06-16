@@ -1,5 +1,5 @@
-import Link from "next/link";
-import UserMenu from "./UserMenu";
+import Link from 'next/link'
+import UserMenu from './UserMenu'
 
 const Navbar = () => {
   return (
@@ -13,7 +13,7 @@ const Navbar = () => {
         <UserMenu />
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

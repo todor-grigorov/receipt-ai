@@ -1,23 +1,23 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { MsalProvider } from "@azure/msal-react";
-import { msalInstance } from "@/lib/auth";
+import { useEffect, useState } from 'react'
+import { MsalProvider } from '@azure/msal-react'
+import { msalInstance } from '@/lib/auth'
 
 export default function AuthProvider({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
     msalInstance.initialize().then(() => {
-      setIsInitialized(true);
-    });
-  }, []);
+      setIsInitialized(true)
+    })
+  }, [])
 
-  if (!isInitialized) return null;
+  if (!isInitialized) return null
 
-  return <MsalProvider instance={msalInstance}>{children}</MsalProvider>;
+  return <MsalProvider instance={msalInstance}>{children}</MsalProvider>
 }

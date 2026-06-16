@@ -1,36 +1,36 @@
-"use client";
+'use client'
 
-import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Avatar, AvatarFallback } from '../ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { LogOutIcon, UserIcon } from "lucide-react";
-import { useMsal } from "@azure/msal-react";
+} from '@/components/ui/dropdown-menu'
+import { LogOutIcon, UserIcon } from 'lucide-react'
+import { useMsal } from '@azure/msal-react'
 
 const UserMenu = () => {
-  const { instance, accounts } = useMsal();
-  const account = accounts[0];
+  const { instance, accounts } = useMsal()
+  const account = accounts[0]
 
   const getInitials = (name: string) => {
     return name
-      .split(" ")
+      .split(' ')
       .map((part) => part[0])
-      .join("")
+      .join('')
       .toUpperCase()
-      .slice(0, 2);
-  };
+      .slice(0, 2)
+  }
 
-  const initials = account?.name ? getInitials(account.name) : "U";
+  const initials = account?.name ? getInitials(account.name) : 'U'
 
   const handleLogOut = () => {
     instance.logoutRedirect({
       postLogoutRedirectUri: `${process.env.NEXT_PUBLIC_AZURE_AD_REDIRECT_URI}`,
-    });
-  };
+    })
+  }
 
   return (
     <DropdownMenu>
@@ -56,7 +56,7 @@ const UserMenu = () => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-};
+  )
+}
 
-export default UserMenu;
+export default UserMenu
