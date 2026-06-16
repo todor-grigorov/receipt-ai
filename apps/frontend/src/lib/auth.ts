@@ -24,6 +24,7 @@ export const msalInstance = new PublicClientApplication(msalConfig);
 
 export const loginRequest: RedirectRequest = {
   scopes: ["openid", "profile", "email"],
+  redirectUri: process.env.NEXT_PUBLIC_AZURE_AD_REDIRECT_URI,
 };
 
 export async function getAccessToken(): Promise<string> {
