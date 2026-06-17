@@ -21,7 +21,23 @@ namespace ReceiptAI.Api.Mappers
                     src.CreatedAt,
                     src.UpdatedAt));
 
-            CreateMap<Receipt, ReceiptResponse>();
+            CreateMap<Receipt, ReceiptResponse>()
+                .ConstructUsing(src => new ReceiptResponse(
+                    src.Id,
+                    src.JobId,
+                    src.MerchantName,
+                    src.ReceiptDate,
+                    src.Total,
+                    src.Tax,
+                    src.Currency,
+                    null,              // BlobUrl set separately after mapping
+                    src.LineItems.Select(li => new ReceiptLineItemResponse(
+                        li.Id,
+                        li.Description,
+                        li.Quantity,
+                        li.UnitPrice,
+                        li.TotalPrice)),
+                    src.CreatedAt));
 
             CreateMap<ReceiptLineItem, ReceiptLineItemResponse>();
 
