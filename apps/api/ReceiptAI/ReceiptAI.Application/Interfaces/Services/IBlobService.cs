@@ -4,6 +4,7 @@
     {
         Task<string> UploadAsync(Stream fileStream, string fileName, string contentType, string userId,
             Guid correlationId, CancellationToken ct = default);
+        Task<string> GenerateSasUrlAsync(string blobUrl, CancellationToken ct = default);
         Task DeleteAsync(string blobUrl, CancellationToken ct = default);
     }
 }

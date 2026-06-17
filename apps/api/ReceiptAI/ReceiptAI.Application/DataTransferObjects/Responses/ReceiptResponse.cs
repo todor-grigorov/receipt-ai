@@ -1,14 +1,15 @@
 ﻿namespace ReceiptAI.Application.DataTransferObjects.Responses
 {
     public record ReceiptResponse(
-    Guid Id,
-    Guid JobId,
-    string MerchantName,
-    DateOnly? ReceiptDate,
-    decimal Total,
-    decimal? Tax,
-    string? Currency,
-    IEnumerable<ReceiptLineItemResponse> LineItems,
-    DateTimeOffset CreatedAt
-);
+        Guid Id,
+        Guid JobId,
+        string MerchantName,
+        DateOnly? ReceiptDate,
+        decimal Total,
+        decimal? Tax,
+        string? Currency,
+        string? BlobUrl,
+        IEnumerable<ReceiptLineItemResponse> LineItems,
+        DateTimeOffset CreatedAt
+    );
 }

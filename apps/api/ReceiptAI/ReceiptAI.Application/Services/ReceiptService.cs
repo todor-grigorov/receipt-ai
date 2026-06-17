@@ -18,15 +18,15 @@ namespace ReceiptAI.Application.Services
         ICurrentUserService currentUser,
         IMapper mapper) : IReceiptService
     {
-        public async Task<ReceiptResponse> GetByIdAsync(
-            Guid id,
-            CancellationToken ct = default)
+        public async Task<ReceiptResponse> GetByIdAsync(Guid id, CancellationToken ct = default)
         {
             var receipt = await repository.Receipt.GetByIdAsync(id, ct)
                 ?? throw new NotFoundException($"Receipt {id} not found");
 
             if (receipt.UserId != currentUser.UserId)
                 throw new UnauthorizedException("Access denied");
+
+            var sasUrl = await blobService.GenerateSasUrlAsync(receipt.Job.BlobUrl, ct);
 
             await auditService.LogAsync(
                 receipt.JobId,
@@ -35,7 +35,8 @@ namespace ReceiptAI.Application.Services
                 actor: $"user:{currentUser.UserId}",
                 ct: ct);
 
-            return mapper.Map<ReceiptResponse>(receipt);
+            var response = mapper.Map<ReceiptResponse>(receipt);
+            return response with { BlobUrl = sasUrl };
         }
 
         public async Task<ReceiptResponse> GetByJobIdAsync(

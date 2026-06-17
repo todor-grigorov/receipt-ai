@@ -36,6 +36,19 @@ namespace ReceiptAI.Infrastructure.Services
             return GenerateSasUrl(blobClient);
         }
 
+        public async Task<string> GenerateSasUrlAsync(string blobUrl, CancellationToken ct = default)
+        {
+            var blobName = ExtractBlobName(blobUrl);
+            var containerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
+            var blobClient = containerClient.GetBlobClient(blobName);
+
+            var sasUri = blobClient.GenerateSasUri(
+                BlobSasPermissions.Read,
+                DateTimeOffset.UtcNow.AddHours(1));
+
+            return sasUri.ToString();
+        }
+
         public async Task DeleteAsync(string blobUrl, CancellationToken ct = default)
         {
             var blobName = ExtractBlobName(blobUrl);
