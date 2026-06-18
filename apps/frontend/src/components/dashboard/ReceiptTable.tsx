@@ -7,14 +7,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { type ReceiptResponse } from '@/types/receipt'
-import { type JobStatusResponse } from '@/types/job'
 import StatusBadge from './StatusBadge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ReceiptWithStatus } from '@/types/receipt'
 
 interface ReceiptTableProps {
-  receipts: ReceiptResponse[]
-  jobs: JobStatusResponse[]
+  receipts: ReceiptWithStatus[]
   isLoading: boolean
 }
 
@@ -53,11 +51,8 @@ function EmptyState() {
 
 export default function ReceiptTable({
   receipts,
-  jobs,
   isLoading,
 }: ReceiptTableProps) {
-  const jobMap = new Map(jobs.map((job) => [job.id, job]))
-
   return (
     <Table>
       <TableHeader>
@@ -74,43 +69,34 @@ export default function ReceiptTable({
         ) : receipts.length === 0 ? (
           <EmptyState />
         ) : (
-          receipts.map((receipt) => {
-            const job = jobMap.get(receipt.jobId)
-            return (
-              <TableRow
-                key={receipt.id}
-                className="cursor-pointer hover:bg-[#F9FAFB]"
-              >
-                <TableCell>
-                  <Link
-                    href={`/receipts/${receipt.id}`}
-                    className="block w-full"
-                  >
-                    {receipt.merchantName ?? 'Unknown merchant'}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <Link
-                    href={`/receipts/${receipt.id}`}
-                    className="block w-full text-[#6B7280]"
-                  >
-                    {receipt.receiptDate ?? '—'}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <Link
-                    href={`/receipts/${receipt.id}`}
-                    className="block w-full"
-                  >
-                    {receipt.currency ?? 'CHF'} {receipt.total.toFixed(2)}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  {job && <StatusBadge status={job.status} />}
-                </TableCell>
-              </TableRow>
-            )
-          })
+          receipts.map((receipt) => (
+            <TableRow
+              key={receipt.id}
+              className="cursor-pointer hover:bg-[#F9FAFB]"
+            >
+              <TableCell>
+                <Link href={`/receipts/${receipt.id}`} className="block w-full">
+                  {receipt.merchantName ?? 'Unknown merchant'}
+                </Link>
+              </TableCell>
+              <TableCell>
+                <Link
+                  href={`/receipts/${receipt.id}`}
+                  className="block w-full text-[#6B7280]"
+                >
+                  {receipt.receiptDate ?? '—'}
+                </Link>
+              </TableCell>
+              <TableCell>
+                <Link href={`/receipts/${receipt.id}`} className="block w-full">
+                  {receipt.currency ?? 'CHF'} {receipt.total.toFixed(2)}
+                </Link>
+              </TableCell>
+              <TableCell>
+                <StatusBadge status={receipt.status} />
+              </TableCell>
+            </TableRow>
+          ))
         )}
       </TableBody>
     </Table>

@@ -1,15 +1,13 @@
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
-import { type ReceiptResponse } from '@/types/receipt'
 import StatusBadge from './StatusBadge'
-import { JobStatus } from '@/types/job'
+import { type ReceiptWithStatus } from '@/types/receipt'
 
 interface ReceiptCardProps {
-  receipt: ReceiptResponse
-  status: JobStatus
+  receipt: ReceiptWithStatus
 }
 
-export default function ReceiptCard({ receipt, status }: ReceiptCardProps) {
+export default function ReceiptCard({ receipt }: ReceiptCardProps) {
   return (
     <Link href={`/receipts/${receipt.id}`}>
       <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
@@ -18,7 +16,7 @@ export default function ReceiptCard({ receipt, status }: ReceiptCardProps) {
             <span className="font-semibold text-[#111827] truncate">
               {receipt.merchantName ?? 'Unknown merchant'}
             </span>
-            <StatusBadge status={status} />
+            <StatusBadge status={receipt.status} />
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-[#6B7280]">

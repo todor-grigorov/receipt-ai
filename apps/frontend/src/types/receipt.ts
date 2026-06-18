@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { type JobStatus } from './job'
 
 export const ReceiptLineItemResponseSchema = z.object({
   id: z.uuid(),
@@ -38,3 +39,6 @@ export const PagedReceiptResponseSchema = z.object({
 })
 
 export type PagedReceiptResponse = z.infer<typeof PagedReceiptResponseSchema>
+export type ReceiptWithStatus = ReceiptResponse & {
+  status: JobStatus
+}
