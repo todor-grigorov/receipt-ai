@@ -12,6 +12,5 @@ namespace ReceiptAI.Domain.Entities
 
         // Navigation
         public Receipt? Receipt { get; set; }
-        public ICollection<AuditLog> AuditLogs { get; set; } = [];
     }
 }
