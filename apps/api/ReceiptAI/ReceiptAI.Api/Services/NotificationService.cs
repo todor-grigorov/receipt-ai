@@ -2,6 +2,7 @@
 using ReceiptAI.Api.Hubs;
 using ReceiptAI.Application.Interfaces.Hubs;
 using ReceiptAI.Application.Interfaces.Services;
+using ReceiptAI.Domain.Enums;
 
 namespace ReceiptAI.Api.Services
 {
@@ -16,7 +17,7 @@ namespace ReceiptAI.Api.Services
                 .JobStatusChanged(new
                 {
                     jobId,
-                    status = "completed",
+                    status = JobStatus.Completed.ToString(),   // ← "Completed"
                     resultId
                 });
 
@@ -29,7 +30,7 @@ namespace ReceiptAI.Api.Services
                 .JobStatusChanged(new
                 {
                     jobId,
-                    status = "failed",
+                    status = JobStatus.Failed.ToString(),       // ← "Failed"
                     errorMessage
                 });
 
@@ -41,7 +42,7 @@ namespace ReceiptAI.Api.Services
                 .JobStatusChanged(new
                 {
                     jobId,
-                    status = "processing"
+                    status = JobStatus.Processing.ToString()    // ← "Processing"
                 });
     }
 }
