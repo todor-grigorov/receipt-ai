@@ -45,7 +45,9 @@ export function useJobStatus({
     if (!jobId) return
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(process.env.NEXT_PUBLIC_BACKEND_SIGNALR_URL!)
+      .withUrl(process.env.NEXT_PUBLIC_BACKEND_SIGNALR_URL!, {
+        withCredentials: true,
+      })
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Warning)
       .build()
