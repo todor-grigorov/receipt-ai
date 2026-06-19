@@ -18,24 +18,24 @@ export async function saveReceiptResult(
     // Insert receipt
     const receiptResult = await client.query(
       `INSERT INTO "Receipts" (
-                "Id",
-                "JobId",
-                "UserId",
-                "OriginalFileName",
-                "MerchantName",
-                "ReceiptDate",
-                "Total",
-                "Tax",
-                "Currency",
-                "RawLlmResponse",
-                "CreatedAt",
-                "UpdatedAt"
-            ) VALUES (
-                gen_random_uuid(),
-                (SELECT "Id" FROM "Jobs" WHERE "CorrelationId" = $1),
-                $2, $3, $4, $5, $6, $7, $8, $9,
-                NOW(), NOW()
-            ) RETURNING "Id"`,
+        "Id",
+        "JobId",
+        "UserId",
+        "OriginalFileName",
+        "MerchantName",
+        "ReceiptDate",
+        "Total",
+        "Tax",
+        "Currency",
+        "RawLlmResponse",
+        "CreatedAt",
+        "UpdatedAt"
+    ) VALUES (
+        gen_random_uuid(),
+        $1,
+        $2, $3, $4, $5, $6, $7, $8, $9,
+        NOW(), NOW()
+    ) RETURNING "Id"`,
       [
         correlationId,
         userId,
