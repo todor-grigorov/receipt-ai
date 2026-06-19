@@ -92,5 +92,11 @@ namespace ReceiptAI.Application.Services
 
             return mapper.Map<JobStatusResponse>(job);
         }
+
+        public async Task<int> CountByUserIdAsync(
+            string userId,
+            JobStatus? statusFilter = null,
+            CancellationToken ct = default) =>
+            await repository.Job.CountByUserIdAsync(userId, statusFilter, ct);
     }
 }

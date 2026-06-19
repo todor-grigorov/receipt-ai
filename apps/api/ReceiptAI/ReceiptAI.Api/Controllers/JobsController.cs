@@ -24,16 +24,24 @@ namespace ReceiptAI.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(PagedResponse<JobStatusResponse>), StatusCodes.Status200OK)]
+        [HttpGet]
+        [ProducesResponseType(typeof(PagedResponse<JobStatusResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] JobStatus? status = null,
-            CancellationToken ct = default)
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] JobStatus? status = null,
+        CancellationToken ct = default)
         {
             var jobs = await jobService.GetByUserIdAsync(
                 currentUser.UserId, page, pageSize, status, ct);
 
-            return Ok(jobs);
+            var totalCount = await jobService.CountByUserIdAsync(
+                currentUser.UserId, status, ct);
+
+            var response = new PagedResponse<JobStatusResponse>(
+                jobs, page, pageSize, totalCount);
+
+            return Ok(response);
         }
     }
 }

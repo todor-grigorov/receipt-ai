@@ -1,38 +1,35 @@
 import { useState, useEffect, useCallback } from 'react'
-import { receiptService } from '@/lib/services/receiptService'
 import { RequestCancelled } from '@/lib/errors/cancelError'
-import { type PagedReceiptResponse } from '@/types/receipt'
 import { error } from '@/lib/logger'
+import { jobService } from '@/lib/services/jobService'
+import { PagedJobResponse } from '@/types/job'
 
-interface UseReceiptsOptions {
+interface UseJobsOptions {
   page?: number
   pageSize?: number
 }
 
-interface UseReceiptsState {
-  data: PagedReceiptResponse | null
+interface UseJobsState {
+  data: PagedJobResponse | null
   isLoading: boolean
   isError: boolean
   errorMessage: string | null
 }
 
-export function useReceipts({
-  page = 1,
-  pageSize = 10,
-}: UseReceiptsOptions = {}) {
-  const [state, setState] = useState<UseReceiptsState>({
+export function useJobs({ page = 1, pageSize = 10 }: UseJobsOptions = {}) {
+  const [state, setState] = useState<UseJobsState>({
     data: null,
     isLoading: true,
     isError: false,
     errorMessage: null,
   })
 
-  const fetchReceipts = useCallback(
+  const fetchJobs = useCallback(
     async (signal: AbortSignal) => {
       setState((prev) => ({ ...prev, isLoading: true, isError: false }))
 
       try {
-        const data = await receiptService.getAll(page, pageSize, signal)
+        const data = await jobService.getAll(page, pageSize, undefined, signal)
         setState({
           data,
           isLoading: false,
@@ -42,12 +39,12 @@ export function useReceipts({
       } catch (err) {
         if (err instanceof RequestCancelled) return
 
-        error('Failed to fetch receipts:', err)
+        error('Failed to fetch jobs:', err)
         setState({
           data: null,
           isLoading: false,
           isError: true,
-          errorMessage: 'Failed to load receipts. Please try again.',
+          errorMessage: 'Failed to load jobs. Please try again.',
         })
       }
     },
@@ -56,17 +53,17 @@ export function useReceipts({
 
   useEffect(() => {
     const controller = new AbortController()
-    void fetchReceipts(controller.signal)
+    void fetchJobs(controller.signal)
     return () => controller.abort()
-  }, [fetchReceipts])
+  }, [fetchJobs])
 
   const refetch = useCallback(() => {
     const controller = new AbortController()
-    fetchReceipts(controller.signal)
-  }, [fetchReceipts])
+    fetchJobs(controller.signal)
+  }, [fetchJobs])
 
   return {
-    receipts: state.data?.items ?? [],
+    jobs: state.data?.items ?? [],
     pagination: state.data
       ? {
           page: state.data.page,
