@@ -79,11 +79,17 @@ namespace ReceiptAI.Application.Services
 
             await repository.Job.UpdateAsync(job, ct);
 
+            var eventType = status switch
+            {
+                JobStatus.Failed => AuditEventType.JobFailed,
+                JobStatus.Completed => AuditEventType.JobCompleted,
+                JobStatus.Processing => AuditEventType.JobProcessingStarted,
+                _ => AuditEventType.JobCreated
+            };
+
             await auditService.LogAsync(
                 correlationId,
-                status == JobStatus.Failed
-                    ? AuditEventType.JobFailed
-                    : AuditEventType.JobCompleted,
+                eventType,
                 service: ServiceNames.Api,
                 payload: new { status = status.ToString(), errorMessage },
                 isSuccess: status != JobStatus.Failed,
