@@ -2,7 +2,11 @@ import { app, EventGridEvent, InvocationContext } from "@azure/functions";
 import axios from "axios";
 import { ReceiptJobSchema } from "../models/receiptJob";
 import { parseReceipt } from "../services/geminiService";
-import { saveReceiptResult, updateJobStatus } from "../services/dbService";
+import {
+  logAuditEvent,
+  saveReceiptResult,
+  updateJobStatus,
+} from "../services/dbService";
 import {
   notifyCompleted,
   notifyFailed,
@@ -49,7 +53,11 @@ async function processReceiptHandler(
     // Step 4 — Call Gemini to parse the receipt
     context.log(`Calling Gemini for correlationId: ${correlationId}`);
 
+    await logAuditEvent(correlationId, "LlmRequestSent", "azure-function");
+
     const receiptResult = await parseReceipt(fileBuffer, job.contentType);
+
+    await logAuditEvent(correlationId, "LlmResponseReceived", "azure-function");
 
     context.log(`Gemini parsing completed for correlationId: ${correlationId}`);
 

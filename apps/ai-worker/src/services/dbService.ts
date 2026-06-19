@@ -101,3 +101,29 @@ export async function updateJobStatus(
     [status, errorMessage ?? null, correlationId],
   );
 }
+
+export async function logAuditEvent(
+  correlationId: string,
+  eventType: string,
+  service: string,
+  payload?: object,
+  isSuccess: boolean = true,
+  errorMessage?: string,
+): Promise<void> {
+  await pool.query(
+    `INSERT INTO "AuditLogs" (
+            "Id", "CorrelationId", "EventType", "Service",
+            "Payload", "IsSuccess", "ErrorMessage", "CreatedAt", "UpdatedAt"
+        ) VALUES (
+            gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW(), NOW()
+        )`,
+    [
+      correlationId,
+      eventType,
+      service,
+      payload ? JSON.stringify(payload) : null,
+      isSuccess,
+      errorMessage ?? null,
+    ],
+  );
+}
