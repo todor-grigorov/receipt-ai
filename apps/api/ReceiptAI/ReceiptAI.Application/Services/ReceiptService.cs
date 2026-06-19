@@ -137,6 +137,7 @@ namespace ReceiptAI.Application.Services
                 Total: 0,
                 Tax: null,
                 Currency: null,
+                BlobUrl: blobUrl,
                 LineItems: [],
                 CreatedAt: DateTimeOffset.UtcNow);
         }

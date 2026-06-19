@@ -9,5 +9,6 @@ namespace ReceiptAI.Application.Interfaces.Services
         Task<IEnumerable<JobStatusResponse>> GetByUserIdAsync(string userId, int page, int pageSize, JobStatus? statusFilter = null, CancellationToken ct = default);
         Task<JobStatusResponse> CreateAsync(Guid correlationId, string userId, string blobUrl, CancellationToken ct = default);
         Task<JobStatusResponse> UpdateStatusAsync(Guid correlationId, JobStatus status, string? errorMessage = null, CancellationToken ct = default);
+        Task<int> CountByUserIdAsync(string userId, JobStatus? statusFilter = null, CancellationToken ct = default);
     }
 }
