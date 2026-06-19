@@ -102,6 +102,7 @@ export function useUpload() {
   return {
     status: state.status,
     jobId: state.jobId,
+    resultId: state.resultId,
     errorMessage: state.errorMessage,
     isIdle: state.status === UploadStatus.Idle,
     isUploading: state.status === UploadStatus.Uploading,
