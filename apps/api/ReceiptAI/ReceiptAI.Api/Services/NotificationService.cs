@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using ReceiptAI.Api.Hubs;
 using ReceiptAI.Application.Interfaces.Hubs;
 using ReceiptAI.Application.Interfaces.Services;
 
-namespace ReceiptAI.Infrastructure.Services
+namespace ReceiptAI.Api.Services
 {
-    public class NotificationService(IHubContext<Hub<IJobHub>, IJobHub> hubContext) : INotificationService
+    public class NotificationService(IHubContext<JobHub, IJobHub> hubContext) : INotificationService
     {
         public async Task NotifyJobCompletedAsync(
             Guid jobId,
