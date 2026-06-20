@@ -44,12 +44,12 @@ namespace ReceiptAI.Api.Controllers
             return Ok(receipt);
         }
 
-        [HttpGet("job/{jobId:guid}")]
+        [HttpGet("correlation/{correlationId:guid}")]
         [ProducesResponseType(typeof(ReceiptResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetByJobId(Guid jobId, CancellationToken ct)
+        public async Task<IActionResult> GetByCorrelationId(Guid correlationId, CancellationToken ct)
         {
-            var receipt = await receiptService.GetByJobIdAsync(jobId, ct);
+            var receipt = await receiptService.GetByCorrelationIdAsync(correlationId, ct);
             return Ok(receipt);
         }
 

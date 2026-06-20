@@ -14,8 +14,8 @@ namespace ReceiptAI.Infrastructure.Persistence.Repositories
                 .Include(r => r.Job)
                 .FirstOrDefaultAsync(ct);
 
-        public async Task<Receipt?> GetByJobIdAsync(Guid jobId, CancellationToken ct = default) =>
-            await FindByCondition(r => r.JobId == jobId, trackChanges: false)
+        public async Task<Receipt?> GetByCorrelationIdAsync(Guid correlationId, CancellationToken ct = default) =>
+            await FindByCondition(r => r.CorrelationId == correlationId, trackChanges: false)
                 .Include(r => r.LineItems)
                 .FirstOrDefaultAsync(ct);
 

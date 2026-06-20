@@ -29,7 +29,7 @@ namespace ReceiptAI.Application.Services
             var sasUrl = await blobService.GenerateSasUrlAsync(receipt.Job.BlobUrl, ct);
 
             await auditService.LogAsync(
-                receipt.JobId,
+                receipt.CorrelationId,
                 AuditEventType.ResultRetrieved,
                 service: ServiceNames.Api,
                 actor: $"user:{currentUser.UserId}",
@@ -39,13 +39,13 @@ namespace ReceiptAI.Application.Services
             return response with { BlobUrl = sasUrl };
         }
 
-        public async Task<ReceiptResponse> GetByJobIdAsync(
-            Guid jobId,
+        public async Task<ReceiptResponse> GetByCorrelationIdAsync(
+            Guid correlationId,
             CancellationToken ct = default)
         {
-            var receipt = await repository.Receipt.GetByJobIdAsync(jobId, ct)
+            var receipt = await repository.Receipt.GetByCorrelationIdAsync(correlationId, ct)
                 ?? throw new NotFoundException(
-                    $"Receipt for job {jobId} not found");
+                    $"Receipt for correlationId {correlationId} not found");
 
             if (receipt.UserId != currentUser.UserId)
                 throw new UnauthorizedException("Access denied");
@@ -131,7 +131,7 @@ namespace ReceiptAI.Application.Services
 
             return new ReceiptResponse(
                 Id: Guid.Empty,
-                JobId: correlationId,
+                CorrelationId: correlationId,
                 MerchantName: string.Empty,
                 ReceiptDate: null,
                 Total: 0,
