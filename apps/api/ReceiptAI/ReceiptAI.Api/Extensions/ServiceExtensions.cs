@@ -19,9 +19,11 @@ namespace ReceiptAI.Api.Extensions
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
+                    builder => builder
+                        .WithOrigins("http://localhost:3000")  // ← exact origin
                         .AllowAnyMethod()
                         .AllowAnyHeader()
+                        .AllowCredentials()                     // ← required for SignalR
                         .WithExposedHeaders("X-Pagination"));
             });
         }

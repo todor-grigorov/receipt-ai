@@ -14,8 +14,8 @@ export const JobStatusResponseSchema = z.object({
   status: z.nativeEnum(JobStatus),
   errorMessage: z.string().nullable(),
   resultId: z.uuid().nullable(),
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 })
 
 export type JobStatusResponse = z.infer<typeof JobStatusResponseSchema>

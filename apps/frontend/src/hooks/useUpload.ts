@@ -13,7 +13,7 @@ export enum UploadStatus {
 
 interface UseUploadState {
   status: UploadStatus
-  jobId: string | null
+  correlationId: string | null
   resultId: string | null
   errorMessage: string | null
 }
@@ -21,7 +21,7 @@ interface UseUploadState {
 export function useUpload() {
   const [state, setState] = useState<UseUploadState>({
     status: UploadStatus.Idle,
-    jobId: null,
+    correlationId: null,
     resultId: null,
     errorMessage: null,
   })
@@ -29,7 +29,7 @@ export function useUpload() {
   const upload = useCallback(async (file: File) => {
     setState({
       status: UploadStatus.Uploading,
-      jobId: null,
+      correlationId: null,
       resultId: null,
       errorMessage: null,
     })
@@ -40,7 +40,7 @@ export function useUpload() {
       setState((prev) => ({
         ...prev,
         status: UploadStatus.Processing,
-        jobId: response.jobId,
+        correlationId: response.correlationId,
       }))
     } catch (err) {
       let errorMessage = 'Upload failed. Please try again.'
@@ -59,7 +59,7 @@ export function useUpload() {
       error('Upload failed:', err)
       setState({
         status: UploadStatus.Failed,
-        jobId: null,
+        correlationId: null,
         resultId: null,
         errorMessage,
       })
@@ -70,14 +70,14 @@ export function useUpload() {
     setState((prev) => ({
       ...prev,
       status: UploadStatus.Completed,
-      resultId, // ← store it
+      resultId,
     }))
   }, [])
 
   const onFailed = useCallback((message: string) => {
     setState({
       status: UploadStatus.Failed,
-      jobId: null,
+      correlationId: null,
       resultId: null,
       errorMessage: message,
     })
@@ -93,7 +93,7 @@ export function useUpload() {
   const reset = useCallback(() => {
     setState({
       status: UploadStatus.Idle,
-      jobId: null,
+      correlationId: null,
       resultId: null,
       errorMessage: null,
     })
@@ -101,7 +101,7 @@ export function useUpload() {
 
   return {
     status: state.status,
-    jobId: state.jobId,
+    correlationId: state.correlationId,
     resultId: state.resultId,
     errorMessage: state.errorMessage,
     isIdle: state.status === UploadStatus.Idle,

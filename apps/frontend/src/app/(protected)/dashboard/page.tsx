@@ -32,11 +32,11 @@ export default function DashboardPage() {
   const isLoading = receiptsLoading || jobsLoading
 
   // Merge receipts with their job status
-  const jobMap = new Map(jobs.map((job) => [job.id, job]))
+  const jobMap = new Map(jobs.map((job) => [job.correlationId, job]))
 
   const receiptsWithStatus: ReceiptWithStatus[] = receipts.map((receipt) => ({
     ...receipt,
-    status: jobMap.get(receipt.jobId)?.status ?? JobStatus.Pending,
+    status: jobMap.get(receipt.correlationId)?.status ?? JobStatus.Pending,
   }))
 
   return (

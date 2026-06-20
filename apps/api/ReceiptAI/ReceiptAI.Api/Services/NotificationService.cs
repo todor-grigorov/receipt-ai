@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using ReceiptAI.Api.Hubs;
 using ReceiptAI.Application.Interfaces.Hubs;
 using ReceiptAI.Application.Interfaces.Services;
+using ReceiptAI.Domain.Enums;
 
-namespace ReceiptAI.Infrastructure.Services
+namespace ReceiptAI.Api.Services
 {
-    public class NotificationService(IHubContext<Hub<IJobHub>, IJobHub> hubContext) : INotificationService
+    public class NotificationService(IHubContext<JobHub, IJobHub> hubContext) : INotificationService
     {
         public async Task NotifyJobCompletedAsync(
             Guid jobId,
@@ -15,7 +17,7 @@ namespace ReceiptAI.Infrastructure.Services
                 .JobStatusChanged(new
                 {
                     jobId,
-                    status = "completed",
+                    status = JobStatus.Completed.ToString(),   // ← "Completed"
                     resultId
                 });
 
@@ -28,7 +30,7 @@ namespace ReceiptAI.Infrastructure.Services
                 .JobStatusChanged(new
                 {
                     jobId,
-                    status = "failed",
+                    status = JobStatus.Failed.ToString(),       // ← "Failed"
                     errorMessage
                 });
 
@@ -40,7 +42,7 @@ namespace ReceiptAI.Infrastructure.Services
                 .JobStatusChanged(new
                 {
                     jobId,
-                    status = "processing"
+                    status = JobStatus.Processing.ToString()    // ← "Processing"
                 });
     }
 }

@@ -33,17 +33,6 @@ namespace ReceiptAI.Infrastructure.Persistence.Configurations
             builder.HasIndex(j => j.UserId);
             builder.HasIndex(j => j.Status);
             builder.HasIndex(j => j.CreatedAt);
-
-            builder.HasOne(j => j.Receipt)
-                .WithOne(r => r.Job)
-                .HasForeignKey<Receipt>(r => r.JobId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(j => j.AuditLogs)
-                .WithOne(a => a.Job)
-                .HasForeignKey(a => a.CorrelationId)
-                .HasPrincipalKey(j => j.CorrelationId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

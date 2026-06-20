@@ -5,7 +5,7 @@ import { type JobStatusChangedEvent } from '@/types/job'
 import { error, info } from '@/lib/logger'
 
 interface UseJobStatusOptions {
-  jobId: string | null
+  correlationId: string | null
   onCompleted?: (resultId: string) => void
   onFailed?: (errorMessage: string) => void
   onProcessing?: () => void
@@ -18,7 +18,7 @@ interface UseJobStatusState {
 }
 
 export function useJobStatus({
-  jobId,
+  correlationId,
   onCompleted,
   onFailed,
   onProcessing,
@@ -42,10 +42,12 @@ export function useJobStatus({
   })
 
   useEffect(() => {
-    if (!jobId) return
+    if (!correlationId) return
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(process.env.NEXT_PUBLIC_BACKEND_SIGNALR_URL!)
+      .withUrl(process.env.NEXT_PUBLIC_BACKEND_SIGNALR_URL!, {
+        withCredentials: true,
+      })
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Warning)
       .build()
@@ -83,8 +85,8 @@ export function useJobStatus({
     const start = async () => {
       try {
         await connection.start()
-        info(`SignalR connected for job: ${jobId}`)
-        await connection.invoke('SubscribeToJob', jobId)
+        info(`SignalR connected for correlationId: ${correlationId}`)
+        await connection.invoke('SubscribeToJob', correlationId)
         setState((prev) => ({ ...prev, isConnecting: false }))
       } catch (err) {
         error('SignalR connection failed:', err)
@@ -100,11 +102,11 @@ export function useJobStatus({
 
     return () => {
       void connection
-        .invoke('UnsubscribeFromJob', jobId)
+        .invoke('UnsubscribeFromJob', correlationId)
         .catch(() => {})
         .finally(() => connection.stop())
     }
-  }, [jobId])
+  }, [correlationId])
 
   return {
     status: state.status,

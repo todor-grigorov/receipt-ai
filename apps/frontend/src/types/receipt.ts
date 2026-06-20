@@ -15,7 +15,7 @@ export type ReceiptLineItemResponse = z.infer<
 
 export const ReceiptResponseSchema = z.object({
   id: z.uuid(),
-  jobId: z.uuid(),
+  correlationId: z.uuid(),
   merchantName: z.string().nullable(),
   receiptDate: z.string().nullable(),
   total: z.number(),
@@ -23,7 +23,7 @@ export const ReceiptResponseSchema = z.object({
   currency: z.string().nullable(),
   blobUrl: z.string().nullable(),
   lineItems: z.array(ReceiptLineItemResponseSchema),
-  createdAt: z.iso.datetime(),
+  createdAt: z.string(),
 })
 
 export type ReceiptResponse = z.infer<typeof ReceiptResponseSchema>

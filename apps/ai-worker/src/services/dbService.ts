@@ -19,7 +19,7 @@ export async function saveReceiptResult(
     const receiptResult = await client.query(
       `INSERT INTO "Receipts" (
                 "Id",
-                "JobId",
+                "CorrelationId",
                 "UserId",
                 "OriginalFileName",
                 "MerchantName",
@@ -32,7 +32,7 @@ export async function saveReceiptResult(
                 "UpdatedAt"
             ) VALUES (
                 gen_random_uuid(),
-                (SELECT "Id" FROM "Jobs" WHERE "CorrelationId" = $1),
+                $1,
                 $2, $3, $4, $5, $6, $7, $8, $9,
                 NOW(), NOW()
             ) RETURNING "Id"`,
@@ -99,5 +99,31 @@ export async function updateJobStatus(
              "UpdatedAt" = NOW()
          WHERE "CorrelationId" = $3`,
     [status, errorMessage ?? null, correlationId],
+  );
+}
+
+export async function logAuditEvent(
+  correlationId: string,
+  eventType: string,
+  service: string,
+  payload?: object,
+  isSuccess: boolean = true,
+  errorMessage?: string,
+): Promise<void> {
+  await pool.query(
+    `INSERT INTO "AuditLogs" (
+            "Id", "CorrelationId", "EventType", "Service",
+            "Payload", "IsSuccess", "ErrorMessage", "CreatedAt", "UpdatedAt"
+        ) VALUES (
+            gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW(), NOW()
+        )`,
+    [
+      correlationId,
+      eventType,
+      service,
+      payload ? JSON.stringify(payload) : null,
+      isSuccess,
+      errorMessage ?? null,
+    ],
   );
 }

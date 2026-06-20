@@ -2,7 +2,7 @@
 {
     public class Receipt : BaseEntity
     {
-        public Guid JobId { get; set; }
+        public Guid CorrelationId { get; set; }
         public string UserId { get; set; } = string.Empty;
         public string MerchantName { get; set; } = string.Empty;
         public DateOnly? ReceiptDate { get; set; }

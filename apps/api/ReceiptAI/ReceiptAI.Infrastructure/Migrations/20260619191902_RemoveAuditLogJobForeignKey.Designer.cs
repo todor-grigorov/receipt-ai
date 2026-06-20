@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReceiptAI.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using ReceiptAI.Infrastructure.Persistence;
 namespace ReceiptAI.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260619191902_RemoveAuditLogJobForeignKey")]
+    partial class RemoveAuditLogJobForeignKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,15 +133,15 @@ namespace ReceiptAI.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CorrelationId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Currency")
                         .HasMaxLength(8)
                         .HasColumnType("character varying(8)");
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("MerchantName")
                         .IsRequired()
@@ -174,10 +177,10 @@ namespace ReceiptAI.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CorrelationId")
-                        .IsUnique();
-
                     b.HasIndex("CreatedAt");
+
+                    b.HasIndex("JobId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -228,8 +231,7 @@ namespace ReceiptAI.Infrastructure.Migrations
                 {
                     b.HasOne("ReceiptAI.Domain.Entities.Job", "Job")
                         .WithOne("Receipt")
-                        .HasForeignKey("ReceiptAI.Domain.Entities.Receipt", "CorrelationId")
-                        .HasPrincipalKey("ReceiptAI.Domain.Entities.Job", "CorrelationId")
+                        .HasForeignKey("ReceiptAI.Domain.Entities.Receipt", "JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

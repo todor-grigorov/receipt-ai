@@ -24,7 +24,7 @@ namespace ReceiptAI.Api.Mappers
             CreateMap<Receipt, ReceiptResponse>()
                 .ConstructUsing(src => new ReceiptResponse(
                     src.Id,
-                    src.JobId,
+                    src.CorrelationId,
                     src.MerchantName,
                     src.ReceiptDate,
                     src.Total,

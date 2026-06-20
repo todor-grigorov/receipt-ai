@@ -11,8 +11,5 @@ namespace ReceiptAI.Domain.Entities
         public string? Payload { get; set; }        // JSON string
         public bool IsSuccess { get; set; } = true;
         public string? ErrorMessage { get; set; }
-
-        // Navigation
-        public Job? Job { get; set; }
     }
 }

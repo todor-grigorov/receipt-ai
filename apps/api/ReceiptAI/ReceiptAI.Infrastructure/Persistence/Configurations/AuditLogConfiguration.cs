@@ -32,13 +32,6 @@ namespace ReceiptAI.Infrastructure.Persistence.Configurations
             builder.HasIndex(a => a.EventType);
             builder.HasIndex(a => a.CreatedAt);
             builder.HasIndex(a => a.Service);
-
-            // Audit logs are append-only — no cascade deletes
-            builder.HasOne(a => a.Job)
-                .WithMany(j => j.AuditLogs)
-                .HasForeignKey(a => a.CorrelationId)
-                .HasPrincipalKey(j => j.CorrelationId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

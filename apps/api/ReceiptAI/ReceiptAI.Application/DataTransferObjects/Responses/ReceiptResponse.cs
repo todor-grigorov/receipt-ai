@@ -2,7 +2,7 @@
 {
     public record ReceiptResponse(
         Guid Id,
-        Guid JobId,
+        Guid CorrelationId,
         string MerchantName,
         DateOnly? ReceiptDate,
         decimal Total,

@@ -22,7 +22,7 @@ export const AuditLogResponseSchema = z.object({
   payload: z.string().nullable(),
   isSuccess: z.boolean(),
   errorMessage: z.string().nullable(),
-  createdAt: z.iso.datetime(),
+  createdAt: z.string(),
 })
 
 export type AuditLogResponse = z.infer<typeof AuditLogResponseSchema>

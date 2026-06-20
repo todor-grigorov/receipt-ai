@@ -9,9 +9,9 @@ export const receiptService = {
     return HttpRequest.get(`/api/receipts/${id}`, ReceiptResponseSchema, signal)
   },
 
-  async getByJobId(jobId: string, signal?: AbortSignal) {
+  async getByCorrelationId(correlationId: string, signal?: AbortSignal) {
     return HttpRequest.get(
-      `/api/receipts/job/${jobId}`,
+      `/api/receipts/correlation/${correlationId}`,
       ReceiptResponseSchema,
       signal
     )
