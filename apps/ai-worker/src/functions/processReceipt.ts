@@ -13,7 +13,7 @@ import {
   notifyProcessing,
 } from "../services/notificationService";
 
-async function processReceiptHandler(
+export async function processReceiptHandler(
   event: EventGridEvent,
   context: InvocationContext,
 ): Promise<void> {
