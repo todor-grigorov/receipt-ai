@@ -17,7 +17,7 @@ export default function ResultPage() {
   const { receipt, isLoading, isError, errorMessage } = useReceipt(params.id)
 
   const { auditTrail, isLoading: isAuditLoading } = useAuditTrail(
-    receipt?.jobId ?? null
+    receipt?.correlationId ?? null
   )
 
   return (

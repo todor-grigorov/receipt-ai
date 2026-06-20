@@ -57,7 +57,7 @@ export function useReceipt(id: string) {
   }
 }
 
-export function useReceiptByJobId(jobId: string) {
+export function useReceiptByCorrelationId(correlationId: string) {
   const [state, setState] = useState<UseReceiptState>({
     data: null,
     isLoading: true,
@@ -72,7 +72,10 @@ export function useReceiptByJobId(jobId: string) {
       setState((prev) => ({ ...prev, isLoading: true, isError: false }))
 
       try {
-        const data = await receiptService.getByJobId(jobId, controller.signal)
+        const data = await receiptService.getByCorrelationId(
+          correlationId,
+          controller.signal
+        )
         setState({
           data,
           isLoading: false,
@@ -82,7 +85,7 @@ export function useReceiptByJobId(jobId: string) {
       } catch (err) {
         if (err instanceof RequestCancelled) return
 
-        error('Failed to fetch receipt by job id:', err)
+        error('Failed to fetch receipt by correlation id:', err)
         setState({
           data: null,
           isLoading: false,
@@ -93,7 +96,7 @@ export function useReceiptByJobId(jobId: string) {
     })()
 
     return () => controller.abort()
-  }, [jobId])
+  }, [correlationId])
 
   return {
     receipt: state.data,

@@ -17,7 +17,7 @@ export default function UploadPage() {
 
   const {
     upload,
-    jobId,
+    correlationId,
     resultId,
     errorMessage,
     isUploading,
@@ -30,9 +30,9 @@ export default function UploadPage() {
     reset,
   } = useUpload()
 
-  // Subscribe to live job status once we have a jobId
+  // Subscribe to live job status once we have a correlationId
   useJobStatus({
-    jobId: isUploading || isProcessing ? jobId : null,
+    correlationId: isUploading || isProcessing ? correlationId : null,
     onCompleted,
     onFailed,
     onProcessing,
