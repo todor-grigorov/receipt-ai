@@ -3,4 +3,6 @@
   <Project Path="ReceiptAI.Application/ReceiptAI.Application.csproj" Id="0070b0e1-58f6-4dd4-92b1-443441f645f9" />
   <Project Path="ReceiptAI.Domain/ReceiptAI.Domain.csproj" Id="a1df19e8-2ed1-45b4-99ea-e3f54b35167b" />
   <Project Path="ReceiptAI.Infrastructure/ReceiptAI.Infrastructure.csproj" Id="97cfa396-7ca7-4187-be88-d89d7dbac93c" />
+  <Project Path="ReceiptAI.IntegrationTests/ReceiptAI.IntegrationTests.csproj" Id="845d8792-7d75-40cd-8929-ba6cd184b848" />
+  <Project Path="ReceiptAI.UnitTests/ReceiptAI.UnitTests.csproj" Id="9718d69d-b925-446a-92b6-ad120fcfe8e5" />
 </Solution>
