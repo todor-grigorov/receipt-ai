@@ -70,6 +70,77 @@ namespace ReceiptAI.UnitTests.Application
                 .WithMessage($"Job {jobId} not found");
         }
 
+        // ── GetByUserIdAsync ──────────────────────────────────
+
+        [Fact]
+        public async Task GetByUserIdAsync_ShouldReturnMappedJobs_ForGivenUser()
+        {
+            // Arrange
+            var userId = "user-123";
+            var jobs = new List<Job>
+    {
+        new() { Id = Guid.NewGuid(), CorrelationId = Guid.NewGuid(), UserId = userId },
+        new() { Id = Guid.NewGuid(), CorrelationId = Guid.NewGuid(), UserId = userId }
+    };
+
+            var expectedResponses = jobs.Select(j =>
+                new JobStatusResponse(j.Id, j.CorrelationId, JobStatus.Pending, null, null,
+                    DateTimeOffset.UtcNow, DateTimeOffset.UtcNow));
+
+            _jobRepository.GetByUserIdAsync(userId, 1, 10, null, Arg.Any<CancellationToken>())
+                .Returns(jobs);
+            _mapper.Map<IEnumerable<JobStatusResponse>>(jobs).Returns(expectedResponses);
+
+            // Act
+            var result = await _sut.GetByUserIdAsync(userId, 1, 10, ct: TestContext.Current.CancellationToken);
+
+            // Assert
+            result.Should().BeEquivalentTo(expectedResponses);
+        }
+
+        [Fact]
+        public async Task GetByUserIdAsync_ShouldPassStatusFilter_WhenProvided()
+        {
+            // Arrange
+            var userId = "user-123";
+            var jobs = new List<Job>
+    {
+        new() { Id = Guid.NewGuid(), CorrelationId = Guid.NewGuid(), UserId = userId, Status = JobStatus.Completed }
+    };
+
+            _jobRepository.GetByUserIdAsync(userId, 1, 10, JobStatus.Completed, Arg.Any<CancellationToken>())
+                .Returns(jobs);
+            _mapper.Map<IEnumerable<JobStatusResponse>>(jobs)
+                .Returns(jobs.Select(j => new JobStatusResponse(
+                    j.Id, j.CorrelationId, j.Status, null, null, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow)));
+
+            // Act
+            var result = await _sut.GetByUserIdAsync(
+                userId, 1, 10, JobStatus.Completed, TestContext.Current.CancellationToken);
+
+            // Assert
+            await _jobRepository.Received(1).GetByUserIdAsync(
+                userId, 1, 10, JobStatus.Completed, Arg.Any<CancellationToken>());
+            result.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public async Task GetByUserIdAsync_ShouldReturnEmptyCollection_WhenUserHasNoJobs()
+        {
+            // Arrange
+            var userId = "user-123";
+            _jobRepository.GetByUserIdAsync(userId, 1, 10, null, Arg.Any<CancellationToken>())
+                .Returns(new List<Job>());
+            _mapper.Map<IEnumerable<JobStatusResponse>>(Arg.Any<IEnumerable<Job>>())
+                .Returns(new List<JobStatusResponse>());
+
+            // Act
+            var result = await _sut.GetByUserIdAsync(userId, 1, 10, ct: TestContext.Current.CancellationToken);
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
         // ── CreateAsync ───────────────────────────────────────
 
         [Fact]
