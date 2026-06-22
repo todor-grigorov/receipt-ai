@@ -14,6 +14,7 @@
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="8.10.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
+    <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageReference Include="NSubstitute" Version="5.3.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
@@ -23,8 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ReceiptAI.Api\ReceiptAI.Api.csproj" />
     <ProjectReference Include="..\ReceiptAI.Application\ReceiptAI.Application.csproj" />
     <ProjectReference Include="..\ReceiptAI.Domain\ReceiptAI.Domain.csproj" />
+    <ProjectReference Include="..\ReceiptAI.Infrastructure\ReceiptAI.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
