@@ -46,3 +46,5 @@ app.MapControllers();
 app.MapHub<JobHub>("/hubs/jobs");
 
 app.Run();
+
+public partial class Program { }
