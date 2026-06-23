@@ -90,7 +90,7 @@ export async function processReceiptHandler(
   }
 }
 
-function extractCorrelationId(event: EventGridEvent): string {
+export function extractCorrelationId(event: EventGridEvent): string {
   // The blob name is {userId}/{correlationId}{extension}
   // event.subject = /blobServices/default/containers/receipts/blobs/{userId}/{correlationId}.pdf
   const subject = event.subject as string;
@@ -100,7 +100,7 @@ function extractCorrelationId(event: EventGridEvent): string {
   return correlationId;
 }
 
-function extractJobData(event: EventGridEvent): unknown {
+export function extractJobData(event: EventGridEvent): unknown {
   // Event Grid BlobCreated event data
   const data = event.data as {
     url: string;
