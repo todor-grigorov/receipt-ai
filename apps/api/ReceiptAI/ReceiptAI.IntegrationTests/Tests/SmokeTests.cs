@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using System.Net;
 
-namespace ReceiptAI.IntegrationTests
+namespace ReceiptAI.IntegrationTests.Tests
 {
     public class SmokeTests : IClassFixture<CustomWebApplicationFactory>
     {
