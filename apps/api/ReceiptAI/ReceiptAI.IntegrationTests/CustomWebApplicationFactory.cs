@@ -12,8 +12,7 @@ namespace ReceiptAI.IntegrationTests
 {
     public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
-        private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
-            .WithImage("postgres:16-alpine")
+        private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder("postgres:16-alpine")
             .WithDatabase("receiptai_test")
             .WithUsername("testuser")
             .WithPassword("testpassword")
