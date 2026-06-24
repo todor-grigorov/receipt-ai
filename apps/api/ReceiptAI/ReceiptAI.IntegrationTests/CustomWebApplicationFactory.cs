@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ReceiptAI.Application.Interfaces.Services;
 using ReceiptAI.Infrastructure.Persistence;
 using Testcontainers.PostgreSql;
 
@@ -36,7 +37,6 @@ namespace ReceiptAI.IntegrationTests
             {
                 var dbContextDescriptor = services.SingleOrDefault(
                     d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
-
                 if (dbContextDescriptor is not null)
                     services.Remove(dbContextDescriptor);
 
@@ -44,6 +44,13 @@ namespace ReceiptAI.IntegrationTests
                     options.UseNpgsql(_dbContainer.GetConnectionString())
                         .ConfigureWarnings(warnings =>
                             warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
+
+                var blobServiceDescriptor = services.SingleOrDefault(
+                    d => d.ServiceType == typeof(IBlobService));
+                if (blobServiceDescriptor is not null)
+                    services.Remove(blobServiceDescriptor);
+
+                services.AddSingleton<IBlobService, FakeBlobService>();
 
                 services.AddSingleton(AuthContext);
 
