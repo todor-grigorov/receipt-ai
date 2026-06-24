@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ReceiptAI.Infrastructure.Persistence;
 using Testcontainers.PostgreSql;
+
 namespace ReceiptAI.IntegrationTests
 {
     public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
@@ -19,8 +21,18 @@ namespace ReceiptAI.IntegrationTests
 
         public TestAuthContext AuthContext { get; } = new();
 
+        public const string TestApiKey = "test-internal-api-key";
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureAppConfiguration((_, configBuilder) =>
+            {
+                configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["InternalApi:ApiKey"] = TestApiKey
+                });
+            });
+
             builder.ConfigureServices(services =>
             {
                 var dbContextDescriptor = services.SingleOrDefault(
