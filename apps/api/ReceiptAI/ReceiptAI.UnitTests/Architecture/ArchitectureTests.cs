@@ -5,6 +5,7 @@ namespace ReceiptAI.UnitTests.Architecture
 {
     public class ArchitectureTests
     {
+        // test if ci workflows are working
         private const string DomainNamespace = "ReceiptAI.Domain";
         private const string ApplicationNamespace = "ReceiptAI.Application";
         private const string InfrastructureNamespace = "ReceiptAI.Infrastructure";
