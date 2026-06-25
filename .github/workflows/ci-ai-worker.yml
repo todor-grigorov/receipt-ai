@@ -1,0 +1,33 @@
+name: CI - AI Worker
+
+on:
+    pull_request:
+        branches: [main]
+        paths:
+            - "apps/ai-worker/**"
+            - ".github/workflows/ci-ai-worker.yml"
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        defaults:
+            run:
+                working-directory: appai-workers/
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+                  cache-dependency-path: apps/ai-worker/package-lock.json
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Run tests
+              run: npm test
