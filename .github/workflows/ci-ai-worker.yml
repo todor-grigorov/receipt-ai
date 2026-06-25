@@ -13,7 +13,7 @@ jobs:
 
         defaults:
             run:
-                working-directory: appai-workers/
+                working-directory: apps/ai-worker
 
         steps:
             - name: Checkout
