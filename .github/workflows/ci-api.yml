@@ -14,17 +14,9 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
-
             - name: Setup .NET
               uses: actions/setup-dotnet@v4
               with:
                   dotnet-version: "10.0.x"
-
-            - name: Restore dependencies
-              run: dotnet restore apps/api/ReceiptAI/ReceiptAI.slnx
-
-            - name: Build
-              run: dotnet build apps/api/ReceiptAI/ReceiptAI.slnx --no-restore --configuration Release
-
             - name: Run unit tests
-              run: dotnet test apps/api/ReceiptAI/ReceiptAI.UnitTests/ReceiptAI.UnitTests.csproj --no-build --configuration Release
+              run: dotnet test apps/api/ReceiptAI/ReceiptAI.UnitTests/ReceiptAI.UnitTests.csproj --configuration Release
