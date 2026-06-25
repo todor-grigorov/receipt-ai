@@ -20,11 +20,5 @@ jobs:
               with:
                   dotnet-version: "10.0.x"
 
-            - name: Restore dependencies
-              run: dotnet restore apps/api/ReceiptAI/ReceiptAI.slnx
-
-            - name: Build
-              run: dotnet build apps/api/ReceiptAI/ReceiptAI.slnx --no-restore --configuration Release
-
             - name: Run integration tests
-              run: dotnet test apps/api/ReceiptAI/ReceiptAI.IntegrationTests/ReceiptAI.IntegrationTests.csproj --no-build --configuration Release
+              run: dotnet test apps/api/ReceiptAI/ReceiptAI.IntegrationTests/ReceiptAI.IntegrationTests.csproj --configuration Release
