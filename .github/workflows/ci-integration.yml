@@ -9,6 +9,7 @@ on:
 
 jobs:
     test:
+        name: Integration Tests
         runs-on: ubuntu-latest
 
         steps:
