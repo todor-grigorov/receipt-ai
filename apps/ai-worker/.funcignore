@@ -1,0 +1,14 @@
+.git*
+.vscode
+local.settings.json
+test/
+tests/
+*.test.ts
+node_modules/typescript
+node_modules/vitest
+node_modules/@vitest
+node_modules/@testing-library
+node_modules/azure-functions-core-tools
+.azurite/
+*.ts
+!dist/**

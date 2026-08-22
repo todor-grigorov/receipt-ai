@@ -27,6 +27,12 @@
 # ── Azure Function ────────────────────
 apps/function/local.settings.json
 
+# Azure Functions deployment artifacts
+**/.deploy-staging/
+**/.deploy-package*/
+**/receiptai-function-deploy*.zip
+**/.runtime-node22.json
+
 # ── OS ────────────────────────────────
 .DS_Store
 Thumbs.db
