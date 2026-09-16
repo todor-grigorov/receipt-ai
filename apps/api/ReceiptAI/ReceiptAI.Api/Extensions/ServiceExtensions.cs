@@ -14,16 +14,20 @@ namespace ReceiptAI.Api.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void ConfigureCors(this IServiceCollection services)
+        public static void ConfigureCors(this IServiceCollection services, IConfiguration configuration)
         {
+            var allowedOrigins = configuration
+                .GetSection("AllowedOrigins")
+                .Get<string[]>() ?? ["http://localhost:3000"];
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
                     builder => builder
-                        .WithOrigins("http://localhost:3000")  // ← exact origin
+                        .WithOrigins(allowedOrigins)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowCredentials()                     // ← required for SignalR
+                        .AllowCredentials()
                         .WithExposedHeaders("X-Pagination"));
             });
         }
