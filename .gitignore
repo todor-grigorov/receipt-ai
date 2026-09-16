@@ -6,6 +6,9 @@
 .vs/
 **/appsettings.Development.json
 **/appsettings.Local.json
+**/publish/
+**/Properties/PublishProfiles/
+**/publish.zip
 
 # ── Node.js (Function + Frontend) ─────
 **/node_modules/
