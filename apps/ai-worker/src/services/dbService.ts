@@ -127,3 +127,13 @@ export async function logAuditEvent(
     ],
   );
 }
+
+export async function checkReceiptExists(
+  correlationId: string,
+): Promise<boolean> {
+  const result = await pool.query(
+    `SELECT 1 FROM "Receipts" WHERE "CorrelationId" = $1 LIMIT 1`,
+    [correlationId],
+  );
+  return result.rowCount! > 0;
+}

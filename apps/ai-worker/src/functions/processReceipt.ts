@@ -3,6 +3,7 @@ import axios from "axios";
 import { ReceiptJobSchema } from "../models/receiptJob";
 import { parseReceipt } from "../services/geminiService";
 import {
+  checkReceiptExists,
   logAuditEvent,
   saveReceiptResult,
   updateJobStatus,
@@ -38,6 +39,15 @@ export async function processReceiptHandler(
     }
 
     const job = jobData.data;
+
+    // In processReceipt.ts, early in the handler after extracting job data
+    const existingReceipt = await checkReceiptExists(correlationId);
+    if (existingReceipt) {
+      context.log(
+        `Receipt already exists for correlationId: ${correlationId}, skipping duplicate processing`,
+      );
+      return;
+    }
 
     context.log(`Downloading blob: ${job.blobUrl}`);
 
@@ -76,6 +86,14 @@ export async function processReceiptHandler(
 
     context.log(`Job completed successfully: ${correlationId}`);
   } catch (error) {
+    // PostgreSQL unique violation error code
+    if ((error as any).code === "23505") {
+      context.log(
+        `Duplicate processing detected for correlationId: ${correlationId}, ignoring`,
+      );
+      return;
+    }
+
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
 
