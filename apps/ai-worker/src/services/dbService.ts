@@ -137,3 +137,21 @@ export async function checkReceiptExists(
   );
   return result.rowCount! > 0;
 }
+
+export async function getJobByCorrelationId(correlationId: string): Promise<{
+  userId: string;
+  blobUrl: string;
+  contentType: string;
+} | null> {
+  const result = await pool.query(
+    `SELECT "UserId", "BlobUrl" FROM "Jobs" WHERE "CorrelationId" = $1 LIMIT 1`,
+    [correlationId],
+  );
+  return result.rowCount! > 0
+    ? {
+        userId: result.rows[0].UserId,
+        blobUrl: result.rows[0].BlobUrl,
+        contentType: "image/jpeg", // default, since contentType comes from event
+      }
+    : null;
+}
