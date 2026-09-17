@@ -5,6 +5,7 @@ const ConfigSchema = z.object({
   DATABASE_URL: z.string().min(1),
   ASPNET_API_URL: z.url(),
   ASPNET_API_KEY: z.string().min(1),
+  AZURE_STORAGE_CONNECTION_STRING: z.string().min(1),
 });
 
 const parsed = ConfigSchema.safeParse(process.env);
