@@ -128,14 +128,32 @@ export async function logAuditEvent(
   );
 }
 
-export async function checkReceiptExists(
+export async function tryAcquireProcessingLock(
   correlationId: string,
 ): Promise<boolean> {
+  // Convert correlationId UUID to a bigint for pg_try_advisory_lock
+  const lockKey = Buffer.from(
+    correlationId.replace(/-/g, ""),
+    "hex",
+  ).readBigInt64BE();
+
   const result = await pool.query(
-    `SELECT 1 FROM "Receipts" WHERE "CorrelationId" = $1 LIMIT 1`,
-    [correlationId],
+    "SELECT pg_try_advisory_lock($1) as acquired",
+    [lockKey.toString()],
   );
-  return result.rowCount! > 0;
+
+  return result.rows[0].acquired === true;
+}
+
+export async function releaseProcessingLock(
+  correlationId: string,
+): Promise<void> {
+  const lockKey = Buffer.from(
+    correlationId.replace(/-/g, ""),
+    "hex",
+  ).readBigInt64BE();
+
+  await pool.query("SELECT pg_advisory_unlock($1)", [lockKey.toString()]);
 }
 
 export async function getJobByCorrelationId(correlationId: string): Promise<{
@@ -154,4 +172,13 @@ export async function getJobByCorrelationId(correlationId: string): Promise<{
         contentType: "image/jpeg", // default, since contentType comes from event
       }
     : null;
+}
+export async function getReceiptIdByCorrelationId(
+  correlationId: string,
+): Promise<string | null> {
+  const result = await pool.query(
+    `SELECT "Id" FROM "Receipts" WHERE "CorrelationId" = $1 LIMIT 1`,
+    [correlationId],
+  );
+  return result.rowCount! > 0 ? result.rows[0].Id : null;
 }

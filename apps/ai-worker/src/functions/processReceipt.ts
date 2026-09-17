@@ -3,8 +3,8 @@ import axios from "axios";
 import { ReceiptJobSchema } from "../models/receiptJob";
 import { parseReceipt } from "../services/geminiService";
 import {
-  checkReceiptExists,
   getJobByCorrelationId,
+  getReceiptIdByCorrelationId,
   logAuditEvent,
   saveReceiptResult,
   updateJobStatus,
@@ -58,23 +58,13 @@ export async function processReceiptHandler(
     // TransactionScope may not have committed the Job record yet.
     await waitForJob(correlationId, context);
 
-    // Step 2 — Check for duplicate processing (idempotency)
-    // Event Grid guarantees at-least-once delivery — if it retries, skip.
-    const existingReceipt = await checkReceiptExists(correlationId);
-    if (existingReceipt) {
-      context.log(
-        `Receipt already exists for correlationId: ${correlationId}, skipping duplicate processing`,
-      );
-      return;
-    }
-
-    // Step 3 — Notify ASP.NET API that processing has started
+    // Step 2 — Notify ASP.NET API that processing has started
     await notifyProcessing(correlationId);
     await updateJobStatus(correlationId, "Processing");
 
     context.log(`Job status updated to Processing: ${correlationId}`);
 
-    // Step 4 — Parse and validate the Event Grid event payload
+    // Step 3 — Parse and validate the Event Grid event payload
     const jobData = ReceiptJobSchema.safeParse(extractJobData(event));
 
     if (!jobData.success) {
@@ -87,7 +77,7 @@ export async function processReceiptHandler(
 
     context.log(`Downloading blob: ${job.blobUrl}`);
 
-    // Step 5 — Download the file from Blob Storage via SAS URL
+    // Step 4 — Download the file from Blob Storage via SAS URL
     const fileResponse = await axios.get(job.blobUrl, {
       responseType: "arraybuffer",
     });
@@ -96,7 +86,7 @@ export async function processReceiptHandler(
 
     context.log(`Blob downloaded, size: ${fileBuffer.length} bytes`);
 
-    // Step 6 — Call Gemini to parse the receipt
+    // Step 5 — Call Gemini to parse the receipt
     context.log(`Calling Gemini for correlationId: ${correlationId}`);
 
     await logAuditEvent(correlationId, "LlmRequestSent", "azure-function");
@@ -107,7 +97,7 @@ export async function processReceiptHandler(
 
     context.log(`Gemini parsing completed for correlationId: ${correlationId}`);
 
-    // Step 7 — Save result to PostgreSQL
+    // Step 6 — Save result to PostgreSQL
     const receiptId = await saveReceiptResult(
       correlationId,
       job.userId,
@@ -117,16 +107,40 @@ export async function processReceiptHandler(
 
     context.log(`Receipt saved to DB with id: ${receiptId}`);
 
-    // Step 8 — Notify ASP.NET API that job completed successfully
+    // Step 7 — Notify ASP.NET API that job completed successfully
     await notifyCompleted(correlationId, receiptId);
 
     context.log(`Job completed successfully: ${correlationId}`);
   } catch (error) {
-    // PostgreSQL unique violation — receipt was saved by a parallel invocation
+    // PostgreSQL unique violation (23505) — a parallel invocation already
+    // saved the Receipt successfully. Fetch the existing Receipt ID and
+    // notify completed so the frontend receives the correct signal.
     if ((error as any).code === "23505") {
       context.log(
-        `Duplicate processing detected for correlationId: ${correlationId}, ignoring`,
+        `Duplicate processing detected for correlationId: ${correlationId}, fetching existing receipt and notifying completion`,
       );
+
+      try {
+        const existingReceiptId =
+          await getReceiptIdByCorrelationId(correlationId);
+
+        if (existingReceiptId) {
+          await notifyCompleted(correlationId, existingReceiptId);
+          context.log(
+            `Notified completion using existing receipt: ${existingReceiptId}`,
+          );
+        } else {
+          context.log(
+            `Could not find existing receipt for correlationId: ${correlationId}`,
+          );
+        }
+      } catch (recoveryError) {
+        context.error(
+          "Failed to recover from duplicate processing:",
+          recoveryError,
+        );
+      }
+
       return;
     }
 
