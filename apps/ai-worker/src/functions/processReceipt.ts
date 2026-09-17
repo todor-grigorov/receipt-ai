@@ -1,6 +1,7 @@
 import { app, EventGridEvent, InvocationContext } from "@azure/functions";
 import axios from "axios";
 import { ReceiptJobSchema } from "../models/receiptJob";
+import { generateSasUrl } from "../services/blobService";
 import { parseReceipt } from "../services/geminiService";
 import {
   getJobByCorrelationId,
@@ -78,7 +79,8 @@ export async function processReceiptHandler(
     context.log(`Downloading blob: ${job.blobUrl}`);
 
     // Step 4 — Download the file from Blob Storage via SAS URL
-    const fileResponse = await axios.get(job.blobUrl, {
+    const sasUrl = await generateSasUrl(job.blobUrl);
+    const fileResponse = await axios.get(sasUrl, {
       responseType: "arraybuffer",
     });
 
@@ -142,6 +144,15 @@ export async function processReceiptHandler(
       }
 
       return;
+    }
+
+    // Temporary: log the full axios error response
+    if ((error as any).response) {
+      context.error("HTTP error response:", {
+        status: (error as any).response.status,
+        data: (error as any).response.data,
+        url: (error as any).response.config?.url,
+      });
     }
 
     const errorMessage =
