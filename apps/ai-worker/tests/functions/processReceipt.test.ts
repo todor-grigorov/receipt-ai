@@ -21,6 +21,7 @@ import axios from "axios";
 import { parseReceipt } from "../../src/services/geminiService";
 import {
   logAuditEvent,
+  getJobByCorrelationId,
   saveReceiptResult,
   updateJobStatus,
 } from "../../src/services/dbService";
@@ -130,6 +131,11 @@ describe("extractJobData", () => {
 describe("processReceiptHandler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getJobByCorrelationId).mockResolvedValue({
+      userId: "user-123",
+      blobUrl: `https://storage.blob.core.windows.net/receipts/user-123/${TEST_CORRELATION_ID}.jpg?sas=token`,
+      contentType: "image/jpeg",
+    });
     vi.mocked(axios.get).mockResolvedValue({ data: Buffer.from("fake-image") });
     vi.mocked(parseReceipt).mockResolvedValue(sampleReceiptResult);
     vi.mocked(saveReceiptResult).mockResolvedValue("receipt-uuid-789");
