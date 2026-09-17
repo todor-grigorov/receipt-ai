@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { EventGridEvent, InvocationContext } from "@azure/functions";
 
 vi.mock("axios");
+vi.mock("../../src/services/blobService");
 vi.mock("../../src/services/geminiService");
 vi.mock("../../src/services/dbService");
 vi.mock("../../src/services/notificationService");
@@ -18,6 +19,7 @@ vi.mock("@azure/functions", () => ({
 }));
 
 import axios from "axios";
+import { generateSasUrl } from "../../src/services/blobService";
 import { parseReceipt } from "../../src/services/geminiService";
 import {
   logAuditEvent,
@@ -37,6 +39,8 @@ import {
 } from "../../src/functions/processReceipt";
 
 const TEST_CORRELATION_ID = "550e8400-e29b-41d4-a716-446655440000";
+const TEST_BLOB_URL = `https://storage.blob.core.windows.net/receipts/user-123/${TEST_CORRELATION_ID}.jpg?sas=token`;
+const TEST_SAS_URL = `${TEST_BLOB_URL}&sig=test-signature`;
 
 function createMockEvent(
   overrides: Partial<EventGridEvent> = {},
@@ -133,9 +137,10 @@ describe("processReceiptHandler", () => {
     vi.clearAllMocks();
     vi.mocked(getJobByCorrelationId).mockResolvedValue({
       userId: "user-123",
-      blobUrl: `https://storage.blob.core.windows.net/receipts/user-123/${TEST_CORRELATION_ID}.jpg?sas=token`,
+      blobUrl: TEST_BLOB_URL,
       contentType: "image/jpeg",
     });
+    vi.mocked(generateSasUrl).mockResolvedValue(TEST_SAS_URL);
     vi.mocked(axios.get).mockResolvedValue({ data: Buffer.from("fake-image") });
     vi.mocked(parseReceipt).mockResolvedValue(sampleReceiptResult);
     vi.mocked(saveReceiptResult).mockResolvedValue("receipt-uuid-789");
@@ -153,6 +158,7 @@ describe("processReceiptHandler", () => {
       "Processing",
     );
     expect(parseReceipt).toHaveBeenCalled();
+    expect(generateSasUrl).toHaveBeenCalledWith(TEST_BLOB_URL);
     expect(saveReceiptResult).toHaveBeenCalledWith(
       TEST_CORRELATION_ID,
       "user-123",
@@ -190,7 +196,7 @@ describe("processReceiptHandler", () => {
     await processReceiptHandler(event, context);
 
     expect(axios.get).toHaveBeenCalledWith(
-      expect.stringContaining(`${TEST_CORRELATION_ID}.jpg`),
+      TEST_SAS_URL,
       { responseType: "arraybuffer" },
     );
   });

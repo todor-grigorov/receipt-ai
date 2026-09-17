@@ -17,6 +17,7 @@ describe("config", () => {
     process.env.DATABASE_URL = "postgresql://user:pass@localhost:5432/db";
     process.env.ASPNET_API_URL = "http://localhost:5000";
     process.env.ASPNET_API_KEY = "test-internal-key";
+    process.env.AZURE_STORAGE_CONNECTION_STRING = "UseDevelopmentStorage=true";
 
     const { config } = await import("../src/config");
 
@@ -40,6 +41,7 @@ describe("config", () => {
     process.env.DATABASE_URL = "postgresql://user:pass@localhost:5432/db";
     process.env.ASPNET_API_URL = "http://localhost:5000";
     process.env.ASPNET_API_KEY = "test-internal-key";
+    process.env.AZURE_STORAGE_CONNECTION_STRING = "UseDevelopmentStorage=true";
 
     await import("../src/config");
 
@@ -62,6 +64,7 @@ describe("config", () => {
     process.env.DATABASE_URL = "";
     process.env.ASPNET_API_URL = "http://localhost:5000";
     process.env.ASPNET_API_KEY = "test-internal-key";
+    process.env.AZURE_STORAGE_CONNECTION_STRING = "UseDevelopmentStorage=true";
 
     await import("../src/config");
 
@@ -83,6 +86,7 @@ describe("config", () => {
     process.env.DATABASE_URL = "postgresql://user:pass@localhost:5432/db";
     process.env.ASPNET_API_URL = "not-a-valid-url";
     process.env.ASPNET_API_KEY = "test-internal-key";
+    process.env.AZURE_STORAGE_CONNECTION_STRING = "UseDevelopmentStorage=true";
 
     await import("../src/config");
 
@@ -104,6 +108,7 @@ describe("config", () => {
     process.env.DATABASE_URL = "postgresql://user:pass@localhost:5432/db";
     process.env.ASPNET_API_URL = "http://localhost:5000";
     delete process.env.ASPNET_API_KEY;
+    process.env.AZURE_STORAGE_CONNECTION_STRING = "UseDevelopmentStorage=true";
 
     await import("../src/config");
 
